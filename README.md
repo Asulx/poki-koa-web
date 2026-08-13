@@ -7,8 +7,8 @@
 ## Clonar el repositorio
 
 ```bash
-git clone https://github.com/Asulx/mamoru-frontend
-cd mamoru-frontend
+git clone https://github.com/Asulx/poki-koa-web.git
+cd poki-koa-web
 ```
 
 ## Inicializar el frontend
