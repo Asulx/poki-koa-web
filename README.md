@@ -1,4 +1,4 @@
-# Mamoru - Lectura y manejo de datos
+# Poki Koa - Lectura y manejo de datos
 ## Requisitos
 
 - Node v24.19.0
@@ -26,7 +26,7 @@ npm --version
 npm install
 ```
 
-3. Ejecutar el frontend
+3. Ejecutar la web
 
 ```bash
 npm run dev
