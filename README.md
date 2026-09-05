@@ -58,7 +58,7 @@ src/
 ├── utils/
 ├── mocks/
 └── styles/
-```── styles/ → Estilos globales
+```
 
 ## Alias
 
