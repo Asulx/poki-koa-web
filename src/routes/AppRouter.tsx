@@ -15,6 +15,8 @@ import NotFoundPage from '@/pages/notfound/NotFoundPage'
 
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 
+import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
+
 
 export default function AppRouter() {
   return (
@@ -49,7 +51,11 @@ export default function AppRouter() {
             element={<ComponentesDemoPage />}
           />
 
-
+          <Route
+            path="/formulario-demo"
+            element={<FormularioDemoPage />}
+          />
+          
         </Route>
 
         <Route
