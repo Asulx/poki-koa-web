@@ -13,6 +13,9 @@ import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
 import NotFoundPage from '@/pages/notfound/NotFoundPage'
 
+import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
+
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -41,6 +44,11 @@ export default function AppRouter() {
             path="/configuracion"
             element={<ConfiguracionPage />}
           />
+          <Route
+            path="/componentes"
+            element={<ComponentesDemoPage />}
+          />
+
 
         </Route>
 
