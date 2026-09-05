@@ -31,3 +31,30 @@ npm install
 ```bash
 npm run dev
 ```
+
+# Arquitectura Frontend
+
+## Estructura de carpetas
+
+src/
+├── components/ → Componentes reutilizables
+├── pages/ → Vistas principales
+├── services/ → Comunicación con APIs
+├── hooks/ → Hooks personalizados
+├── types/ → Interfaces y tipos TypeScript
+├── utils/ → Funciones auxiliares
+├── routes/ → Configuración de rutas
+├── context/ → Estado global
+├── constants/ → Constantes compartidas
+├── mocks/ → Datos simulados
+├── styles/ → Estilos globales
+
+## Alias
+
+Se utiliza el alias `@` para acceder a archivos dentro de `src`.
+
+Ejemplo:
+
+```ts
+import Button from '@/components/ui/Button'
+```
