@@ -11,6 +11,7 @@ import Navbar from '@/components/layout/Navbar'
 export default function AppRouter() {
   return (
     <BrowserRouter>
+        <Navbar />
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/pacientes" element={<PacientesPage />} />
