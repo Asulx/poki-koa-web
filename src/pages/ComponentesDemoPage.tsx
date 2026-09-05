@@ -1,4 +1,6 @@
 import Button from '@/components/ui/Button/Button'
+import Input from '@/components/ui/Input/Input'
+import Card from '@/components/ui/Card/Card'
 
 export default function ComponentesDemoPage() {
   return (
@@ -16,6 +18,21 @@ export default function ComponentesDemoPage() {
       <Button disabled>
         Eliminar
       </Button>
+
+      <Input
+        label="Nombre"
+        placeholder="Ingrese nombre"
+       />
+
+       <Input
+        label="Correo"
+        placeholder="correo@ejemplo.com"
+        error="Correo inválido"
+        />
+
+       <Card title="Paciente">
+        Información del paciente
+       </Card>
     </div>
   )
 }
