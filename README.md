@@ -36,18 +36,29 @@ npm run dev
 
 ## Estructura de carpetas
 
+```text
 src/
-├── components/ → Componentes reutilizables
-├── pages/ → Vistas principales
-├── services/ → Comunicación con APIs
-├── hooks/ → Hooks personalizados
-├── types/ → Interfaces y tipos TypeScript
-├── utils/ → Funciones auxiliares
-├── routes/ → Configuración de rutas
-├── context/ → Estado global
-├── constants/ → Constantes compartidas
-├── mocks/ → Datos simulados
-├── styles/ → Estilos globales
+├── assets/
+├── components/
+│   ├── ui/
+│   ├── layout/
+│   └── common/
+├── pages/
+│   ├── Dashboard/
+│   ├── Pacientes/
+│   ├── Medicamentos/
+│   ├── Reportes/
+│   └── Configuracion/
+├── routes/
+├── services/
+├── hooks/
+├── types/
+├── context/
+├── constants/
+├── utils/
+├── mocks/
+└── styles/
+```── styles/ → Estilos globales
 
 ## Alias
 
