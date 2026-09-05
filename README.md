@@ -59,6 +59,21 @@ src/
 ├── mocks/
 └── styles/
 ```
+## Responsabilidad de carpetas
+
+| Carpeta | Responsabilidad |
+|----------|-----------------|
+| components | Componentes reutilizables |
+| pages | Vistas principales |
+| services | Comunicación con APIs |
+| hooks | Hooks personalizados |
+| types | Interfaces y tipos TypeScript |
+| routes | Configuración de rutas |
+| context | Estado global |
+| constants | Constantes compartidas |
+| utils | Funciones auxiliares |
+| mocks | Datos simulados |
+| styles | Estilos globales |
 
 ## Alias
 
