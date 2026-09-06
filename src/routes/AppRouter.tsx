@@ -1,7 +1,7 @@
 import {
-  BrowserRouter,
-  Routes,
-  Route
+    BrowserRouter,
+    Routes,
+    Route
 } from 'react-router-dom'
 
 import MainLayout from '@/components/layout/MainLayout'
@@ -17,53 +17,71 @@ import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
 
+import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
+
+import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
+
+
+
 
 export default function AppRouter() {
-  return (
-    <BrowserRouter>
-      <Routes>
+    return (
+        <BrowserRouter>
+            <Routes>
 
-        <Route element={<MainLayout />}>
+                <Route element={<MainLayout />}>
 
-          <Route path="/" element={<DashboardPage />} />
+                    <Route path="/" element={<DashboardPage />} />
 
-          <Route
-            path="/pacientes"
-            element={<PacientesPage />}
-          />
+                    <Route
+                        path="/pacientes"
+                        element={<PacientesPage />}
+                    />
 
-          <Route
-            path="/medicamentos"
-            element={<MedicamentosPage />}
-          />
+                    <Route
+                        path="/medicamentos"
+                        element={<MedicamentosPage />}
+                    />
 
-          <Route
-            path="/reportes"
-            element={<ReportesPage />}
-          />
+                    <Route
+                        path="/reportes"
+                        element={<ReportesPage />}
+                    />
 
-          <Route
-            path="/configuracion"
-            element={<ConfiguracionPage />}
-          />
-          <Route
-            path="/componentes"
-            element={<ComponentesDemoPage />}
-          />
+                    <Route
+                        path="/configuracion"
+                        element={<ConfiguracionPage />}
+                    />
+                    <Route
+                        path="/componentes"
+                        element={<ComponentesDemoPage />}
+                    />
 
-          <Route
-            path="/formulario-demo"
-            element={<FormularioDemoPage />}
-          />
-          
-        </Route>
+                    <Route
+                        path="/formulario-demo"
+                        element={<FormularioDemoPage />}
+                    />
+                    <Route
+                        path="/pacientes/nuevo"
+                        element={<PacienteCreatePage />}
+                    />
+                    <Route
+                        path="/pacientes/editar"
+                        element={<PacienteEditPage />}
+                    />
+                    <Route
+                        path="/pacientes/editar"
+                        element={<PacienteEditPage />}
+                    />
 
-        <Route
-          path="*"
-          element={<NotFoundPage />}
-        />
+                </Route>
 
-      </Routes>
-    </BrowserRouter>
-  )
+                <Route
+                    path="*"
+                    element={<NotFoundPage />}
+                />
+
+            </Routes>
+        </BrowserRouter>
+    )
 }
