@@ -9,9 +9,10 @@ import MainLayout from '@/components/layout/MainLayout'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import PacientesPage from '@/pages/pacientes/PacientesPage'
 import MedicamentosPage from '@/pages/medicamentos/MedicamentosPage'
+import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage'
 import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
-import NotFoundPage from '@/pages/notfound/NotFoundPage'
+import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
 
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 
@@ -69,9 +70,14 @@ export default function AppRouter() {
                         path="/pacientes/editar"
                         element={<PacienteEditPage />}
                     />
+
                     <Route
-                        path="/pacientes/editar"
-                        element={<PacienteEditPage />}
+                        path="/medicamentos/editar"
+                        element={<MedicamentoEditPage />}
+                    />
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
                     />
 
                 </Route>

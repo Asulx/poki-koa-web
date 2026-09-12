@@ -54,17 +54,14 @@ export default function ComponentesDemoPage() {
       </Modal>
 
       <Table
-        columns={['Nombre', 'Edad']}
+        columns={[
+          { key: 'Nombre', label: 'Nombre' },
+          { key: 'Edad', label: 'Edad' },
+        ]}
         data={[
-          {
-            Nombre: 'Juan',
-            Edad: 25,
-          },
-         {
-          Nombre: 'María',
-          Edad: 30,
-         },
-       ]}
+          { Nombre: 'Juan', Edad: 25 },
+          { Nombre: 'María', Edad: 30 },
+        ]}
       />
     </div>
   )
