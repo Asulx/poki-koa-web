@@ -36,7 +36,11 @@ export default function Table<T>({
               <td key={column.key}>
                 {column.render
                   ? column.render(row)
-                  : (row as Record<string, unknown>)[column.key]}
+                  : String(
+                      (row as Record<string, unknown>)[
+                        column.key
+                      ]
+                    )}
               </td>
             ))}
           </tr>
