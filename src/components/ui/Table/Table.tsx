@@ -1,30 +1,42 @@
+import type { ReactNode } from 'react'
+
 import './Table.css'
 
-type TableProps = {
-  columns: string[]
-  data: Record<string, string | number>[]
+export type TableColumn<T> = {
+  key: string
+  label: string
+  render?: (row: T) => ReactNode
 }
 
-export default function Table({
+type TableProps<T> = {
+  columns: TableColumn<T>[]
+  data: T[]
+  rowKey?: (row: T, index: number) => string | number
+}
+
+export default function Table<T>({
   columns,
   data,
-}: TableProps) {
+  rowKey = (_row, index) => index,
+}: TableProps<T>) {
   return (
     <table className="table">
       <thead>
         <tr>
           {columns.map((column) => (
-            <th key={column}>{column}</th>
+            <th key={column.key}>{column.label}</th>
           ))}
         </tr>
       </thead>
 
       <tbody>
-        {data.map((row, index) => (
-          <tr key={index}>
+        {data.map((row, rowIndex) => (
+          <tr key={rowKey(row, rowIndex)}>
             {columns.map((column) => (
-              <td key={column}>
-                {row[column]}
+              <td key={column.key}>
+                {column.render
+                  ? column.render(row)
+                  : (row as Record<string, unknown>)[column.key]}
               </td>
             ))}
           </tr>
