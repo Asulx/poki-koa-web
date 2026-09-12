@@ -31,3 +31,56 @@ npm install
 ```bash
 npm run dev
 ```
+
+# Arquitectura Frontend
+
+## Estructura de carpetas
+
+```text
+src/
+├── assets/
+├── components/
+│   ├── ui/
+│   ├── layout/
+│   └── common/
+├── pages/
+│   ├── Dashboard/
+│   ├── Pacientes/
+│   ├── Medicamentos/
+│   ├── Reportes/
+│   └── Configuracion/
+├── routes/
+├── services/
+├── hooks/
+├── types/
+├── context/
+├── constants/
+├── utils/
+├── mocks/
+└── styles/
+```
+## Responsabilidad de carpetas
+
+| Carpeta | Responsabilidad |
+|----------|-----------------|
+| components | Componentes reutilizables |
+| pages | Vistas principales |
+| services | Comunicación con APIs |
+| hooks | Hooks personalizados |
+| types | Interfaces y tipos TypeScript |
+| routes | Configuración de rutas |
+| context | Estado global |
+| constants | Constantes compartidas |
+| utils | Funciones auxiliares |
+| mocks | Datos simulados |
+| styles | Estilos globales |
+
+## Alias
+
+Se utiliza el alias `@` para acceder a archivos dentro de `src`.
+
+Ejemplo:
+
+```ts
+import Button from '@/components/ui/Button'
+```
