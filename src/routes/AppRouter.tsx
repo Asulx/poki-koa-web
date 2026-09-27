@@ -8,22 +8,19 @@ import MainLayout from '@/components/layout/MainLayout'
 
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import PacientesPage from '@/pages/pacientes/PacientesPage'
+import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
+import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
+
 import MedicamentosPage from '@/pages/medicamentos/MedicamentosPage'
+import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
 import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage'
+
 import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
 import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
 
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
-
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
-
-import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
-
-import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
-
-import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
-
 
 export default function AppRouter() {
     return (
@@ -32,7 +29,10 @@ export default function AppRouter() {
 
                 <Route element={<MainLayout />}>
 
-                    <Route path="/" element={<DashboardPage />} />
+                    <Route
+                        path="/"
+                        element={<DashboardPage />}
+                    />
 
                     <Route
                         path="/pacientes"
@@ -40,8 +40,28 @@ export default function AppRouter() {
                     />
 
                     <Route
+                        path="/pacientes/nuevo"
+                        element={<PacienteCreatePage />}
+                    />
+
+                    <Route
+                        path="/pacientes/editar/:id"
+                        element={<PacienteEditPage />}
+                    />
+
+                    <Route
                         path="/medicamentos"
                         element={<MedicamentosPage />}
+                    />
+
+                    <Route
+                        path="/medicamentos/nuevo"
+                        element={<MedicamentoCreatePage />}
+                    />
+
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
                     />
 
                     <Route
@@ -53,6 +73,7 @@ export default function AppRouter() {
                         path="/configuracion"
                         element={<ConfiguracionPage />}
                     />
+
                     <Route
                         path="/componentes"
                         element={<ComponentesDemoPage />}
@@ -62,33 +83,6 @@ export default function AppRouter() {
                         path="/formulario-demo"
                         element={<FormularioDemoPage />}
                     />
-                    <Route
-                        path="/pacientes/nuevo"
-                        element={<PacienteCreatePage />}
-                    />
-                    <Route
-                        path="/pacientes/editar"
-                        element={<PacienteEditPage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/editar"
-                        element={<MedicamentoEditPage />}
-                    />
-                    <Route
-                        path="/medicamentos/editar/:id"
-                        element={<MedicamentoEditPage />}
-                    />
-                    <Route
-                        path="/medicamentos/nuevo"
-                        element={<MedicamentoCreatePage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/editar/:id"
-                        element={<MedicamentoEditPage />}
-                    />
-
 
                 </Route>
 
@@ -101,4 +95,3 @@ export default function AppRouter() {
         </BrowserRouter>
     )
 }
-
