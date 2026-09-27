@@ -22,7 +22,7 @@ import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
 
 import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
 
-
+import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
 
 
 export default function AppRouter() {
@@ -79,6 +79,16 @@ export default function AppRouter() {
                         path="/medicamentos/editar/:id"
                         element={<MedicamentoEditPage />}
                     />
+                    <Route
+                        path="/medicamentos/nuevo"
+                        element={<MedicamentoCreatePage />}
+                    />
+
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
+                    />
+
 
                 </Route>
 
@@ -91,3 +101,4 @@ export default function AppRouter() {
         </BrowserRouter>
     )
 }
+
