@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { obtenerDatosReporte } from '@/services/reportesService';
-import type { DatosReporte } from '@/services/reportesService';
+import type { DatosReporte } from '@/types/reporte'
 import { exportarAPDF, exportarAExcel } from '@/utils/exportService';
 import Button from '@/components/ui/Button/Button';
 import Card from '@/components/ui/Card/Card';
