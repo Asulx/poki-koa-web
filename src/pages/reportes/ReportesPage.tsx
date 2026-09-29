@@ -8,6 +8,10 @@ import Card from '@/components/ui/Card/Card';
 export default function ReportesPage() {
     const [datos, setDatos] = useState<DatosReporte | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    
+    // Nuevos estados para los botones
+    const [exportandoPDF, setExportandoPDF] = useState<boolean>(false);
+    const [exportandoExcel, setExportandoExcel] = useState<boolean>(false);
 
     useEffect(() => {
         const cargarReportes = async () => {
@@ -21,26 +25,31 @@ export default function ReportesPage() {
                 setLoading(false);
             }
         };
-
         cargarReportes();
     }, []);
 
-    // Manejo del estado de carga (Criterio de aceptación)
+    // Manejadores para exportación con simulador de carga
+    const handleExportarPDF = async () => {
+        setExportandoPDF(true);
+        // Pequeña pausa de medio segundo para que React alcance a mostrar el "Exportando..."
+        await new Promise(resolve => setTimeout(resolve, 500)); 
+        exportarAPDF(datos);
+        setExportandoPDF(false);
+    };
+
+    const handleExportarExcel = async () => {
+        setExportandoExcel(true);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        exportarAExcel(datos);
+        setExportandoExcel(false);
+    };
+
     if (loading) {
-        return (
-            <div className="p-6">
-                <h2>Cargando módulo de reportes...</h2>
-            </div>
-        );
+        return <div className="p-6"><h2>Cargando módulo de reportes...</h2></div>;
     }
 
-    // Manejo de estado vacío (Criterio de aceptación)
     if (!datos) {
-        return (
-            <div className="p-6">
-                <h2>No hay datos disponibles para reportar en este momento.</h2>
-            </div>
-        );
+        return <div className="p-6"><h2>No hay datos disponibles.</h2></div>;
     }
 
     return (
@@ -51,27 +60,24 @@ export default function ReportesPage() {
                     <p style={{ margin: 0, color: 'gray' }}>Métricas clave y análisis del sistema</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button onClick={() => exportarAPDF(datos)}>Exportar PDF</Button>
-                    <Button onClick={() => exportarAExcel(datos)}>Exportar Excel</Button>
+                    <Button onClick={handleExportarPDF} disabled={exportandoPDF}>
+                        {exportandoPDF ? 'Exportando...' : 'Exportar PDF'}
+                    </Button>
+                    <Button onClick={handleExportarExcel} disabled={exportandoExcel}>
+                        {exportandoExcel ? 'Exportando...' : 'Exportar Excel'}
+                    </Button>
                 </div>
             </header>
 
-            {/* Componentes visuales adaptados a tu interfaz Card */}
             <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
                 <Card title="EVENTOS HOY">
-                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#1a5f7a' }}>
-                        {datos.eventosCriticos}
-                    </p>
+                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#1a5f7a' }}>{datos.eventosCriticos}</p>
                 </Card>
                 <Card title="ALERTAS">
-                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>
-                        {datos.totalAlertas}
-                    </p>
+                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{datos.totalAlertas}</p>
                 </Card>
                 <Card title="MEDICAMENTOS">
-                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#1a5f7a' }}>
-                        {datos.medicamentosAdministrados}
-                    </p>
+                    <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#1a5f7a' }}>{datos.medicamentosAdministrados}</p>
                 </Card>
             </section>
         </div>
