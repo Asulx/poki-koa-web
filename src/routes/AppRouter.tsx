@@ -70,10 +70,6 @@ export default function AppRouter() {
                         path="/pacientes/editar"
                         element={<PacienteEditPage />}
                     />
-                    <Route
-                        path="/pacientes/editar/:id"
-                        element={<PacienteEditPage />}
-                    />
 
                     <Route
                         path="/medicamentos/editar"
