@@ -1,5 +1,6 @@
 export interface Paciente {
   id: number
+  identificador: string
   nombre_completo: string
   edad_meses: number | null
   sexo: string | null
@@ -42,6 +43,7 @@ export interface Paciente {
 }
 
 export type PacientePayload = {
+  identificador: string
   nombre_completo: string
   edad_meses: number | null
   sexo: string | null

@@ -88,6 +88,7 @@ export default function PacientesPage() {
     return pacientes.filter((p) => {
       const coincideTexto =
         filtroTexto === '' ||
+        (p.identificador && p.identificador.toLowerCase().includes(filtroTexto.toLowerCase())) ||
         p.nombre_completo.toLowerCase().includes(filtroTexto.toLowerCase()) ||
         String(p.id).includes(filtroTexto) ||
         (p.diagnostico && p.diagnostico.toLowerCase().includes(filtroTexto.toLowerCase()))
@@ -106,8 +107,8 @@ export default function PacientesPage() {
   const columns: TableColumn<Paciente>[] = [
     {
       key: 'id',
-      label: 'ID',
-      render: (row) => <strong>#{row.id}</strong>,
+      label: 'Identificador',
+      render: (row) => <strong>{row.identificador || `#${row.id}`}</strong>,
     },
     {
       key: 'nombre_completo',

@@ -1,6 +1,12 @@
 import { z } from 'zod'
 
 export const pacienteSchema = z.object({
+  identificador: z
+    .string()
+    .trim()
+    .min(1, 'El identificador es obligatorio')
+    .max(30, 'El identificador no puede exceder los 30 caracteres'),
+
   nombre_completo: z
     .string()
     .min(1, 'El nombre completo es obligatorio')

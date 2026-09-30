@@ -26,6 +26,7 @@ export default function PacienteForm({
 
   // Manejamos compatibilidad con posibles datos previos o diferentes nombres de campos
   const [formData, setFormData] = useState({
+    identificador: initial?.identificador ?? '',
     nombre_completo:
       initial?.nombre_completo ?? (initial as any)?.nombre ?? '',
     edad_meses:
@@ -87,6 +88,7 @@ export default function PacienteForm({
   useEffect(() => {
     if (initial) {
       setFormData({
+        identificador: initial.identificador ?? '',
         nombre_completo:
           initial.nombre_completo ?? (initial as any).nombre ?? '',
         edad_meses:
@@ -123,6 +125,13 @@ export default function PacienteForm({
 
   const validarCampo = (campo: string, valor: string) => {
     let error = ''
+    if (campo === 'identificador') {
+      if (valor.trim() === '') {
+        error = 'El identificador es obligatorio.'
+      } else if (valor.trim().length > 30) {
+        error = 'El identificador no puede exceder los 30 caracteres.'
+      }
+    }
     if (campo === 'nombre_completo' && valor.trim() === '') {
       error = 'El nombre completo es obligatorio.'
     }
@@ -163,6 +172,22 @@ export default function PacienteForm({
     e.preventDefault()
 
     // Validar requeridos
+    if (formData.identificador.trim() === '') {
+      setErrores((prev) => ({
+        ...prev,
+        identificador: 'El identificador es obligatorio.',
+      }))
+      return
+    }
+
+    if (formData.identificador.trim().length > 30) {
+      setErrores((prev) => ({
+        ...prev,
+        identificador: 'El identificador no puede exceder los 30 caracteres.',
+      }))
+      return
+    }
+
     if (formData.nombre_completo.trim() === '') {
       setErrores((prev) => ({
         ...prev,
@@ -177,6 +202,7 @@ export default function PacienteForm({
 
     // Construir el payload con los tipos exactos esperados por api/bebes/
     const payload: PacientePayload = {
+      identificador: formData.identificador.trim(),
       nombre_completo: formData.nombre_completo.trim(),
       edad_meses:
         formData.edad_meses.trim() !== ''
@@ -206,6 +232,7 @@ export default function PacienteForm({
 
   const handleLimpiar = () => {
     setFormData({
+      identificador: '',
       nombre_completo: '',
       edad_meses: '',
       sexo: 'F',
@@ -285,6 +312,29 @@ export default function PacienteForm({
           INFORMACIÓN DEL RECIÉN NACIDO
         </h3>
         <div style={gridStyle}>
+          <div>
+            <label style={labelStyle}>
+              Identificador <span style={{ color: '#dc2626' }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="identificador"
+              value={formData.identificador}
+              onChange={handleChange}
+              maxLength={30}
+              placeholder="Ej: BEB-0001"
+              style={{
+                ...inputStyle,
+                border: errores.identificador
+                  ? '1px solid #dc2626'
+                  : inputStyle.border,
+              }}
+            />
+            {errores.identificador && (
+              <span style={errorStyle}>{errores.identificador}</span>
+            )}
+          </div>
+
           <div>
             <label style={labelStyle}>
               Nombre Completo <span style={{ color: '#dc2626' }}>*</span>
