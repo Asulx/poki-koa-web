@@ -9,9 +9,16 @@ import MainLayout from '@/components/layout/MainLayout'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import PacientesPage from '@/pages/pacientes/PacientesPage'
 import MedicamentosPage from '@/pages/medicamentos/MedicamentosPage'
+<<<<<<< HEAD
 import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
 import NotFoundPage from '@/pages/notfound/NotFoundPage'
+=======
+import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage'
+import ReportesPage from '@/pages/reportes/ReportesPage'
+import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
+import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
+>>>>>>> rama-temporal
 
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 
@@ -21,6 +28,11 @@ import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
 
 import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
 
+<<<<<<< HEAD
+=======
+import PacienteDetalle from '@/pages/pacientes/PacienteDetalle'
+
+>>>>>>> rama-temporal
 
 
 
@@ -69,9 +81,25 @@ export default function AppRouter() {
                         path="/pacientes/editar"
                         element={<PacienteEditPage />}
                     />
+<<<<<<< HEAD
                     <Route
                         path="/pacientes/editar"
                         element={<PacienteEditPage />}
+=======
+
+                    <Route
+                        path="/pacientes/detalle"
+                        element={<PacienteDetalle />}
+                    />
+
+                    <Route
+                        path="/medicamentos/editar"
+                        element={<MedicamentoEditPage />}
+                    />
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
+>>>>>>> rama-temporal
                     />
 
                 </Route>

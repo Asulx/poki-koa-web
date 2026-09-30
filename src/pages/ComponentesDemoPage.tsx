@@ -54,6 +54,7 @@ export default function ComponentesDemoPage() {
       </Modal>
 
       <Table
+<<<<<<< HEAD
         columns={['Nombre', 'Edad']}
         data={[
           {
@@ -65,6 +66,16 @@ export default function ComponentesDemoPage() {
           Edad: 30,
          },
        ]}
+=======
+        columns={[
+          { key: 'Nombre', label: 'Nombre' },
+          { key: 'Edad', label: 'Edad' },
+        ]}
+        data={[
+          { Nombre: 'Juan', Edad: 25 },
+          { Nombre: 'María', Edad: 30 },
+        ]}
+>>>>>>> rama-temporal
       />
     </div>
   )
