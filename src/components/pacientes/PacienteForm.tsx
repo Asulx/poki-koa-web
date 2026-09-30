@@ -1,171 +1,533 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react'
+import type { Medico, Paciente, PacientePayload } from '@/types/paciente'
+import { pacientesService } from '@/services/pacientesService'
 
-export interface PacienteFormData {
-    nombre: string;
-    edadGestacional: string;
-    sexo: string;
-    peso: string;
-    numeroCuna: string;
-    fechaIngreso: string;
-    medicoResponsable: string;
-    diagnostico: string;
-    estadoCanula: string;
-    viaIntravenosa: string;
-}
+export type { PacientePayload }
+
+// Exportamos también como PacienteFormData por compatibilidad de tipos
+export type PacienteFormData = PacientePayload
 
 interface PacienteFormProps {
-    pacienteInicial?: PacienteFormData;
-    onSubmit: (datos: PacienteFormData) => void;
-    isLoading?: boolean;
+  pacienteInicial?: Partial<PacientePayload> | Partial<Paciente>
+  defaultValues?: Partial<PacientePayload> | Partial<Paciente>
+  onSubmit: (datos: PacientePayload) => Promise<void> | void
+  isLoading?: boolean
+  onCancel?: () => void
 }
 
-export default function PacienteForm({ pacienteInicial, onSubmit, isLoading = false }: PacienteFormProps) {
-    // 1. Estado inicial con todos los campos de tu diseño
-    const [formData, setFormData] = useState<PacienteFormData>(
-        pacienteInicial || {
-            nombre: '', edadGestacional: '', sexo: 'Femenino', peso: '',
-            numeroCuna: 'Cuna 04', fechaIngreso: new Date().toISOString().split('T')[0], // Fecha de hoy por defecto
-            medicoResponsable: '', diagnostico: '',
-            estadoCanula: 'OK - Conectada', viaIntravenosa: 'OK - Activa'
+export default function PacienteForm({
+  pacienteInicial,
+  defaultValues,
+  onSubmit,
+  isLoading = false,
+  onCancel,
+}: PacienteFormProps) {
+  const initial = pacienteInicial || defaultValues
+
+  // Manejamos compatibilidad con posibles datos previos o diferentes nombres de campos
+  const [formData, setFormData] = useState({
+    nombre_completo:
+      initial?.nombre_completo ?? (initial as any)?.nombre ?? '',
+    edad_meses:
+      initial?.edad_meses !== null && initial?.edad_meses !== undefined
+        ? String(initial.edad_meses)
+        : '',
+    sexo:
+      initial?.sexo === 'Masculino'
+        ? 'M'
+        : initial?.sexo === 'Femenino'
+        ? 'F'
+        : initial?.sexo ?? 'F',
+    peso:
+      initial?.peso !== null && initial?.peso !== undefined
+        ? String(initial.peso)
+        : '',
+    fecha_nacimiento:
+      initial?.fecha_nacimiento ?? (initial as any)?.fechaNacimiento ?? '',
+    fecha_ingreso: initial?.fecha_ingreso
+      ? initial.fecha_ingreso.split('T')[0]
+      : (initial as any)?.fechaIngreso ??
+        new Date().toISOString().split('T')[0],
+    diagnostico: initial?.diagnostico ?? '',
+    plan_cuidados:
+      initial?.plan_cuidados ?? (initial as any)?.observaciones ?? '',
+    medico_a_cargo:
+      initial?.medico_a_cargo !== null && initial?.medico_a_cargo !== undefined
+        ? String(initial.medico_a_cargo)
+        : '',
+  })
+
+  const [medicos, setMedicos] = useState<Medico[]>([])
+  const [cargandoMedicos, setCargandoMedicos] = useState(false)
+  const [errores, setErrores] = useState<Record<string, string>>({})
+
+  // Cargar médicos para el selector
+  useEffect(() => {
+    let activo = true
+    async function cargarMedicos() {
+      setCargandoMedicos(true)
+      try {
+        const lista = await pacientesService.listarMedicos()
+        if (activo) {
+          setMedicos(lista)
         }
-    );
+      } catch (err) {
+        console.warn('No se pudo cargar la lista de médicos', err)
+      } finally {
+        if (activo) setCargandoMedicos(false)
+      }
+    }
+    cargarMedicos()
+    return () => {
+      activo = false
+    }
+  }, [])
 
-    const [errores, setErrores] = useState<Partial<PacienteFormData>>({});
+  // Sincronizar si cambia initial
+  useEffect(() => {
+    if (initial) {
+      setFormData({
+        nombre_completo:
+          initial.nombre_completo ?? (initial as any).nombre ?? '',
+        edad_meses:
+          initial.edad_meses !== null && initial.edad_meses !== undefined
+            ? String(initial.edad_meses)
+            : '',
+        sexo:
+          initial.sexo === 'Masculino'
+            ? 'M'
+            : initial.sexo === 'Femenino'
+            ? 'F'
+            : initial.sexo ?? 'F',
+        peso:
+          initial.peso !== null && initial.peso !== undefined
+            ? String(initial.peso)
+            : '',
+        fecha_nacimiento:
+          initial.fecha_nacimiento ?? (initial as any).fechaNacimiento ?? '',
+        fecha_ingreso: initial.fecha_ingreso
+          ? initial.fecha_ingreso.split('T')[0]
+          : (initial as any).fechaIngreso ??
+            new Date().toISOString().split('T')[0],
+        diagnostico: initial.diagnostico ?? '',
+        plan_cuidados:
+          initial.plan_cuidados ?? (initial as any).observaciones ?? '',
+        medico_a_cargo:
+          initial.medico_a_cargo !== null &&
+          initial.medico_a_cargo !== undefined
+            ? String(initial.medico_a_cargo)
+            : '',
+      })
+    }
+  }, [initial])
 
-    // 2. Lógica de validación en tiempo real (ejemplo simple)
-    const validarCampo = (nombre: string, valor: string) => {
-        let error = '';
-        if (nombre === 'nombre' && valor.trim() === '') error = 'El nombre es obligatorio.';
-        if (nombre === 'peso' && isNaN(Number(valor))) error = 'El peso debe ser un número.';
-        setErrores(prev => ({ ...prev, [nombre]: error }));
-    };
+  const validarCampo = (campo: string, valor: string) => {
+    let error = ''
+    if (campo === 'nombre_completo' && valor.trim() === '') {
+      error = 'El nombre completo es obligatorio.'
+    }
+    if (campo === 'peso' && valor.trim() !== '') {
+      const num = Number(valor)
+      if (isNaN(num) || num <= 0) {
+        error = 'El peso debe ser un número mayor a 0 kg.'
+      }
+    }
+    if (campo === 'edad_meses' && valor.trim() !== '') {
+      const num = Number(valor)
+      if (isNaN(num) || !Number.isInteger(num) || num < 0) {
+        error = 'La edad debe ser un número entero mayor o igual a 0.'
+      }
+    }
+    if (campo === 'fecha_nacimiento' && valor.trim() !== '') {
+      const fecha = new Date(valor)
+      const hoy = new Date()
+      hoy.setHours(23, 59, 59, 999)
+      if (fecha > hoy) {
+        error = 'La fecha de nacimiento no puede ser futura.'
+      }
+    }
+    setErrores((prev) => ({ ...prev, [campo]: error }))
+  }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        validarCampo(name, value);
-    };
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    validarCampo(name, value)
+  }
 
-    const tieneErrores = Object.values(errores).some(err => err !== '') || formData.nombre === '';
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!tieneErrores) onSubmit(formData);
-    };
+    // Validar requeridos
+    if (formData.nombre_completo.trim() === '') {
+      setErrores((prev) => ({
+        ...prev,
+        nombre_completo: 'El nombre completo es obligatorio.',
+      }))
+      return
+    }
 
-    const handleLimpiar = () => {
-        setFormData({
-            nombre: '', edadGestacional: '', sexo: 'Femenino', peso: '',
-            numeroCuna: 'Cuna 04', fechaIngreso: new Date().toISOString().split('T')[0],
-            medicoResponsable: '', diagnostico: '',
-            estadoCanula: 'OK - Conectada', viaIntravenosa: 'OK - Activa'
-        });
-        setErrores({});
-    };
+    // Comprobar si hay errores activos
+    const tieneErrores = Object.values(errores).some((err) => err !== '')
+    if (tieneErrores) return
 
-    // Estilos reutilizables para mantener el diseño limpio
-    const sectionStyle = { marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #e5e7eb' };
-    const gridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' };
-    const labelStyle = { display: 'block', fontSize: '0.8rem', fontWeight: 'bold', color: '#6b7280', marginBottom: '0.3rem', textTransform: 'uppercase' as 'uppercase' };
-    const inputStyle = { width: '100%', padding: '0.6rem', borderRadius: '4px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb' };
+    // Construir el payload con los tipos exactos esperados por api/bebes/
+    const payload: PacientePayload = {
+      nombre_completo: formData.nombre_completo.trim(),
+      edad_meses:
+        formData.edad_meses.trim() !== ''
+          ? parseInt(formData.edad_meses, 10)
+          : null,
+      sexo: formData.sexo ? formData.sexo : null,
+      peso:
+        formData.peso.trim() !== '' ? parseFloat(formData.peso) : null,
+      fecha_nacimiento:
+        formData.fecha_nacimiento.trim() !== ''
+          ? formData.fecha_nacimiento
+          : null,
+      fecha_ingreso:
+        formData.fecha_ingreso.trim() !== ''
+          ? new Date(formData.fecha_ingreso).toISOString()
+          : null,
+      diagnostico: formData.diagnostico.trim(),
+      plan_cuidados: formData.plan_cuidados.trim(),
+      medico_a_cargo:
+        formData.medico_a_cargo.trim() !== ''
+          ? parseInt(formData.medico_a_cargo, 10)
+          : null,
+    }
 
-    return (
-        <form onSubmit={handleSubmit} style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', maxWidth: '700px' }}>
-            
-            {/* SECCIÓN: INFORMACIÓN PERSONAL */}
-            <div style={sectionStyle}>
-                <h3 style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>INFORMACIÓN PERSONAL</h3>
-                <div style={gridStyle}>
-                    <div>
-                        <label style={labelStyle}>Nombre Completo</label>
-                        <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre del bebé" style={{ ...inputStyle, border: errores.nombre ? '1px solid red' : inputStyle.border }} />
-                        {errores.nombre && <span style={{ color: 'red', fontSize: '0.75rem' }}>{errores.nombre}</span>}
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Edad / Semanas Gestacionales</label>
-                        <input type="text" name="edadGestacional" value={formData.edadGestacional} onChange={handleChange} placeholder="ej. 2 meses / 34 sem" style={inputStyle} />
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Sexo</label>
-                        <select name="sexo" value={formData.sexo} onChange={handleChange} style={inputStyle}>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Masculino">Masculino</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Peso (KG)</label>
-                        <input type="text" name="peso" value={formData.peso} onChange={handleChange} placeholder="ej. 3.2" style={{ ...inputStyle, border: errores.peso ? '1px solid red' : inputStyle.border }} />
-                        {errores.peso && <span style={{ color: 'red', fontSize: '0.75rem' }}>{errores.peso}</span>}
-                    </div>
-                </div>
-            </div>
+    await onSubmit(payload)
+  }
 
-            {/* SECCIÓN: ASIGNACIÓN CLÍNICA */}
-            <div style={sectionStyle}>
-                <h3 style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>ASIGNACIÓN CLÍNICA</h3>
-                <div style={gridStyle}>
-                    <div>
-                        <label style={labelStyle}>Número de Cuna</label>
-                        <select name="numeroCuna" value={formData.numeroCuna} onChange={handleChange} style={inputStyle}>
-                            <option value="Cuna 01">Cuna 01</option>
-                            <option value="Cuna 02">Cuna 02</option>
-                            <option value="Cuna 03">Cuna 03</option>
-                            <option value="Cuna 04">Cuna 04</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Fecha de Ingreso</label>
-                        <input type="date" name="fechaIngreso" value={formData.fechaIngreso} onChange={handleChange} style={inputStyle} />
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Médico Responsable</label>
-                        <input type="text" name="medicoResponsable" value={formData.medicoResponsable} onChange={handleChange} placeholder="Nombre del médico" style={inputStyle} />
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Diagnóstico Principal</label>
-                        <input type="text" name="diagnostico" value={formData.diagnostico} onChange={handleChange} placeholder="Diagnóstico de ingreso" style={inputStyle} />
-                    </div>
-                </div>
-            </div>
+  const handleLimpiar = () => {
+    setFormData({
+      nombre_completo: '',
+      edad_meses: '',
+      sexo: 'F',
+      peso: '',
+      fecha_nacimiento: '',
+      fecha_ingreso: new Date().toISOString().split('T')[0],
+      diagnostico: '',
+      plan_cuidados: '',
+      medico_a_cargo: '',
+    })
+    setErrores({})
+  }
 
-            {/* SECCIÓN: DISPOSITIVOS */}
-            <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>DISPOSITIVOS</h3>
-                <div style={gridStyle}>
-                    <div>
-                        <label style={labelStyle}>Estado de Cánula</label>
-                        <select name="estadoCanula" value={formData.estadoCanula} onChange={handleChange} style={inputStyle}>
-                            <option value="OK - Conectada">OK - Conectada</option>
-                            <option value="Alerta - Desconectada">Alerta - Desconectada</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Vía Intravenosa</label>
-                        <select name="viaIntravenosa" value={formData.viaIntravenosa} onChange={handleChange} style={inputStyle}>
-                            <option value="OK - Activa">OK - Activa</option>
-                            <option value="Alerta - Obstruida">Alerta - Obstruida</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+  // Estilos visuales acordes a la estética de Poki Koa
+  const sectionStyle: React.CSSProperties = {
+    marginBottom: '1.5rem',
+    paddingBottom: '1rem',
+    borderBottom: '1px solid #e5e7eb',
+  }
+  const gridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '1rem',
+    marginTop: '0.75rem',
+  }
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.8rem',
+    fontWeight: 600,
+    color: '#4b5563',
+    marginBottom: '0.35rem',
+    textTransform: 'uppercase',
+  }
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '0.65rem 0.8rem',
+    borderRadius: '6px',
+    border: '1px solid #d1d5db',
+    backgroundColor: '#f9fafb',
+    fontSize: '0.9rem',
+    color: '#111827',
+    boxSizing: 'border-box',
+    outline: 'none',
+  }
+  const errorStyle: React.CSSProperties = {
+    color: '#dc2626',
+    fontSize: '0.75rem',
+    marginTop: '0.25rem',
+    display: 'block',
+  }
 
-            {/* BOTONES DE ACCIÓN */}
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button 
-                    type="submit" 
-                    disabled={tieneErrores || isLoading} 
-                    style={{ backgroundColor: '#1f5b6a', color: 'white', flex: 1, padding: '0.8rem', borderRadius: '4px', border: 'none', cursor: tieneErrores ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
-                >
-                    {isLoading ? 'Procesando...' : (pacienteInicial ? 'Actualizar Paciente' : 'Registrar Paciente')}
-                </button>
-                <button 
-                    type="button" 
-                    onClick={handleLimpiar} 
-                    style={{ padding: '0.8rem 2rem', borderRadius: '4px', border: '1px solid #d1d5db', backgroundColor: 'white', cursor: 'pointer', fontWeight: 'bold', color: '#4b5563' }}
-                >
-                    Limpiar
-                </button>
-            </div>
-        </form>
-    );
+  const estaInvalido =
+    formData.nombre_completo.trim() === '' ||
+    Object.values(errores).some((err) => err !== '')
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        backgroundColor: '#ffffff',
+        padding: '2rem',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        maxWidth: '750px',
+      }}
+    >
+      {/* SECCIÓN 1: DATOS PERSONALES */}
+      <div style={sectionStyle}>
+        <h3
+          style={{
+            fontSize: '0.95rem',
+            color: '#1f5b6a',
+            margin: '0 0 0.5rem 0',
+            fontWeight: 700,
+          }}
+        >
+          INFORMACIÓN DEL RECIÉN NACIDO
+        </h3>
+        <div style={gridStyle}>
+          <div>
+            <label style={labelStyle}>
+              Nombre Completo <span style={{ color: '#dc2626' }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="nombre_completo"
+              value={formData.nombre_completo}
+              onChange={handleChange}
+              placeholder="Ej: Sofía García"
+              style={{
+                ...inputStyle,
+                border: errores.nombre_completo
+                  ? '1px solid #dc2626'
+                  : inputStyle.border,
+              }}
+            />
+            {errores.nombre_completo && (
+              <span style={errorStyle}>{errores.nombre_completo}</span>
+            )}
+          </div>
+
+          <div>
+            <label style={labelStyle}>Edad (Meses)</label>
+            <input
+              type="number"
+              name="edad_meses"
+              min="0"
+              step="1"
+              value={formData.edad_meses}
+              onChange={handleChange}
+              placeholder="Ej: 2"
+              style={{
+                ...inputStyle,
+                border: errores.edad_meses
+                  ? '1px solid #dc2626'
+                  : inputStyle.border,
+              }}
+            />
+            {errores.edad_meses && (
+              <span style={errorStyle}>{errores.edad_meses}</span>
+            )}
+          </div>
+
+          <div>
+            <label style={labelStyle}>Sexo</label>
+            <select
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              style={inputStyle}
+            >
+              <option value="F">Femenino</option>
+              <option value="M">Masculino</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Peso (KG)</label>
+            <input
+              type="number"
+              name="peso"
+              step="0.01"
+              min="0.01"
+              value={formData.peso}
+              onChange={handleChange}
+              placeholder="Ej: 3.25"
+              style={{
+                ...inputStyle,
+                border: errores.peso
+                  ? '1px solid #dc2626'
+                  : inputStyle.border,
+              }}
+            />
+            {errores.peso && (
+              <span style={errorStyle}>{errores.peso}</span>
+            )}
+          </div>
+
+          <div>
+            <label style={labelStyle}>Fecha de Nacimiento</label>
+            <input
+              type="date"
+              name="fecha_nacimiento"
+              value={formData.fecha_nacimiento}
+              onChange={handleChange}
+              style={{
+                ...inputStyle,
+                border: errores.fecha_nacimiento
+                  ? '1px solid #dc2626'
+                  : inputStyle.border,
+              }}
+            />
+            {errores.fecha_nacimiento && (
+              <span style={errorStyle}>{errores.fecha_nacimiento}</span>
+            )}
+          </div>
+
+          <div>
+            <label style={labelStyle}>Fecha de Ingreso</label>
+            <input
+              type="date"
+              name="fecha_ingreso"
+              value={formData.fecha_ingreso}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* SECCIÓN 2: ASIGNACIÓN MÉDICA Y CLÍNICA */}
+      <div style={sectionStyle}>
+        <h3
+          style={{
+            fontSize: '0.95rem',
+            color: '#1f5b6a',
+            margin: '0 0 0.5rem 0',
+            fontWeight: 700,
+          }}
+        >
+          SEGUIMIENTO CLÍNICO
+        </h3>
+        <div style={gridStyle}>
+          <div>
+            <label style={labelStyle}>Médico a Cargo</label>
+            <select
+              name="medico_a_cargo"
+              value={formData.medico_a_cargo}
+              onChange={handleChange}
+              style={inputStyle}
+            >
+              <option value="">
+                {cargandoMedicos
+                  ? 'Cargando médicos...'
+                  : 'Sin médico asignado (Opcional)'}
+              </option>
+              {medicos.map((medico) => (
+                <option key={medico.id} value={medico.id}>
+                  {medico.nombre_completo}
+                  {medico.turno ? ` (${medico.turno})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ marginTop: '1rem' }}>
+          <label style={labelStyle}>Diagnóstico Médico</label>
+          <textarea
+            name="diagnostico"
+            value={formData.diagnostico}
+            onChange={handleChange}
+            placeholder="Diagnóstico clínico principal o motivo de ingreso"
+            rows={2}
+            style={{
+              ...inputStyle,
+              fontFamily: 'inherit',
+              resize: 'vertical',
+            }}
+          />
+        </div>
+
+        <div style={{ marginTop: '1rem' }}>
+          <label style={labelStyle}>Plan de Cuidados</label>
+          <textarea
+            name="plan_cuidados"
+            value={formData.plan_cuidados}
+            onChange={handleChange}
+            placeholder="Protocolos de atención, monitoreo de signos vitales o cuidados asignados"
+            rows={2}
+            style={{
+              ...inputStyle,
+              fontFamily: 'inherit',
+              resize: 'vertical',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* BOTONES DE ACCIÓN */}
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+        <button
+          type="submit"
+          disabled={estaInvalido || isLoading}
+          style={{
+            backgroundColor: estaInvalido || isLoading ? '#9ca3af' : '#1f5b6a',
+            color: '#ffffff',
+            flex: 1,
+            padding: '0.8rem 1.5rem',
+            borderRadius: '6px',
+            border: 'none',
+            cursor: estaInvalido || isLoading ? 'not-allowed' : 'pointer',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            transition: 'background-color 0.2s',
+          }}
+        >
+          {isLoading
+            ? 'Guardando...'
+            : initial
+            ? 'Actualizar Paciente'
+            : 'Registrar Paciente'}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleLimpiar}
+          disabled={isLoading}
+          style={{
+            padding: '0.8rem 1.8rem',
+            borderRadius: '6px',
+            border: '1px solid #d1d5db',
+            backgroundColor: '#ffffff',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            color: '#4b5563',
+          }}
+        >
+          Limpiar
+        </button>
+
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isLoading}
+            style={{
+              padding: '0.8rem 1.5rem',
+              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+              backgroundColor: '#f3f4f6',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              fontWeight: 500,
+              fontSize: '0.95rem',
+              color: '#374151',
+            }}
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
+    </form>
+  )
 }
