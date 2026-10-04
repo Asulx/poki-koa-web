@@ -22,6 +22,13 @@ import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
 
+import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
+
+import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
+
+import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
+
+
 export default function AppRouter() {
     return (
         <BrowserRouter>
@@ -83,6 +90,33 @@ export default function AppRouter() {
                         path="/formulario-demo"
                         element={<FormularioDemoPage />}
                     />
+                    <Route
+                        path="/pacientes/nuevo"
+                        element={<PacienteCreatePage />}
+                    />
+                    <Route
+                        path="/pacientes/editar"
+                        element={<PacienteEditPage />}
+                    />
+
+                    <Route
+                        path="/medicamentos/editar"
+                        element={<MedicamentoEditPage />}
+                    />
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
+                    />
+                    <Route
+                        path="/medicamentos/nuevo"
+                        element={<MedicamentoCreatePage />}
+                    />
+
+                    <Route
+                        path="/medicamentos/editar/:id"
+                        element={<MedicamentoEditPage />}
+                    />
+
 
                 </Route>
 
@@ -95,3 +129,4 @@ export default function AppRouter() {
         </BrowserRouter>
     )
 }
+
