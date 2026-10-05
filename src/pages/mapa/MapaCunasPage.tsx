@@ -1,3 +1,4 @@
+import ModalAsignacion from './ModalAsignacion';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Cuna, EstadoCuna } from '@/types/cuna';
@@ -19,7 +20,8 @@ const generarCunasBase = (): Cuna[] => {
 export default function MapaCunasPage() {
   const navigate = useNavigate();
   const [cunas, setCunas] = useState<Cuna[]>(generarCunasBase());
-  
+  const [cunaParaAsignar, setCunaParaAsignar] = useState<Cuna | null>(null);
+
   // Estados para Búsqueda y Filtros[cite: 17]
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<EstadoCuna | 'todos'>('todos');
@@ -43,8 +45,8 @@ export default function MapaCunasPage() {
       // Escenario 1: Redirigir a vista detallada[cite: 17]
       navigate(`/pacientes/${cuna.pacienteId}`);
     } else if (cuna.estado === 'disponible') {
-      // Escenario 2: Abrir modal de asignación (Por ahora un log)[cite: 17]
-      console.log(`Abrir modal para asignar paciente a ${cuna.id}`);
+      // Escenario 2: Abrir modal de asignación
+      setCunaParaAsignar(cuna);
     }
   };
 
