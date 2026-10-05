@@ -1,10 +1,11 @@
+import { api } from '@/api/axios';
 import ModalAsignacion from './ModalAsignacion';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Cuna, EstadoCuna } from '@/types/cuna';
 import './MapaCunas.css';
 
-// Generador adaptado al formato "Cuna-01"[cite: 16]
+// Generador adaptado al formato "Cuna-01"
 const generarCunasBase = (): Cuna[] => {
   return Array.from({ length: 40 }, (_, index) => {
     const numero = index + 1;
@@ -22,9 +23,31 @@ export default function MapaCunasPage() {
   const [cunas, setCunas] = useState<Cuna[]>(generarCunasBase());
   const [cunaParaAsignar, setCunaParaAsignar] = useState<Cuna | null>(null);
 
-  // Estados para Búsqueda y Filtros[cite: 17]
+  // Estados para Búsqueda y Filtros
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<EstadoCuna | 'todos'>('todos');
+
+  // Carga inicial de cunas desde el backend[cite: 7]
+  useEffect(() => {
+    const obtenerCunas = async () => {
+      try {
+        const respuesta = await api.get('/api/cots'); 
+        
+        // Programación defensiva: aseguramos que sea un arreglo
+        const cunasDelBackend = Array.isArray(respuesta.data) 
+          ? respuesta.data 
+          : (respuesta.data?.data || []); 
+
+        if (cunasDelBackend.length > 0) {
+          setCunas(cunasDelBackend);
+        }
+      } catch (error) {
+        console.error('Error al conectar con el backend:', error);
+      }
+    };
+
+    obtenerCunas();
+  }, []);
 
   // Lógica de filtrado cruda
   const cunasFiltradas = useMemo(() => {
@@ -39,13 +62,13 @@ export default function MapaCunasPage() {
     });
   }, [cunas, busqueda, filtroEstado]);
 
-  // Manejador de clics según Escenarios BDD[cite: 17]
+  // Manejador de clics según Escenarios BDD[cite: 8]
   const manejarClicCuna = (cuna: Cuna) => {
     if (cuna.estado === 'ocupada') {
-      // Escenario 1: Redirigir a vista detallada[cite: 17]
+      // Escenario 1: Redirigir a vista detallada 
       navigate(`/pacientes/${cuna.pacienteId}`);
     } else if (cuna.estado === 'disponible') {
-      // Escenario 2: Abrir modal de asignación
+      // Escenario 2: Abrir modal de asignación 
       setCunaParaAsignar(cuna);
     }
   };
@@ -55,7 +78,7 @@ export default function MapaCunasPage() {
       <header className="mapa-header">
         <h2>Unidad de Neonatología</h2>
         
-        {/* Controles de Filtro y Búsqueda[cite: 17] */}
+        {/* Controles de Filtro y Búsqueda */}
         <div className="controles-busqueda">
           <input 
             type="text" 
@@ -86,7 +109,7 @@ export default function MapaCunasPage() {
           >
             <div className="cuna-header">
               <span className="cuna-numero">{cuna.id}</span>
-              {cuna.alertaMedica && <span className="icono-alerta">⚠️</span>} {/* Indicador alerta[cite: 16] */}
+              {cuna.alertaMedica && <span className="icono-alerta">⚠️</span>}
             </div>
             
             <div className="cuna-cuerpo">
@@ -98,6 +121,18 @@ export default function MapaCunasPage() {
           </div>
         ))}
       </main>
+
+      {/* Modal de Asignación */}
+      {cunaParaAsignar && (
+        <ModalAsignacion 
+          cuna={cunaParaAsignar} 
+          onClose={() => setCunaParaAsignar(null)} 
+          onAsignar={(pacienteNombre) => {
+            console.log(`Simulando asignación de ${pacienteNombre} a ${cunaParaAsignar.id}`);
+            setCunaParaAsignar(null);
+          }} 
+        />
+      )}
     </div>
   );
 }

@@ -22,111 +22,35 @@ import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
 
-import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
-
-import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
-
-import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
-
+// Importación de tu nueva vista del Mapa de Cunas
+import MapaCunasPage from '@/pages/mapa/MapaCunasPage'
 
 export default function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
-
                 <Route element={<MainLayout />}>
+                    <Route path="/" element={<DashboardPage />} />
+                    
+                    <Route path="/pacientes" element={<PacientesPage />} />
+                    <Route path="/pacientes/nuevo" element={<PacienteCreatePage />} />
+                    <Route path="/pacientes/editar/:id" element={<PacienteEditPage />} />
+                    
+                    <Route path="/medicamentos" element={<MedicamentosPage />} />
+                    <Route path="/medicamentos/nuevo" element={<MedicamentoCreatePage />} />
+                    <Route path="/medicamentos/editar/:id" element={<MedicamentoEditPage />} />
+                    
+                    <Route path="/reportes" element={<ReportesPage />} />
+                    <Route path="/configuracion" element={<ConfiguracionPage />} />
+                    <Route path="/componentes" element={<ComponentesDemoPage />} />
+                    <Route path="/formulario-demo" element={<FormularioDemoPage />} />
 
-                    <Route
-                        path="/"
-                        element={<DashboardPage />}
-                    />
-
-                    <Route
-                        path="/pacientes"
-                        element={<PacientesPage />}
-                    />
-
-                    <Route
-                        path="/pacientes/nuevo"
-                        element={<PacienteCreatePage />}
-                    />
-
-                    <Route
-                        path="/pacientes/editar/:id"
-                        element={<PacienteEditPage />}
-                    />
-
-                    <Route
-                        path="/medicamentos"
-                        element={<MedicamentosPage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/nuevo"
-                        element={<MedicamentoCreatePage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/editar/:id"
-                        element={<MedicamentoEditPage />}
-                    />
-
-                    <Route
-                        path="/reportes"
-                        element={<ReportesPage />}
-                    />
-
-                    <Route
-                        path="/configuracion"
-                        element={<ConfiguracionPage />}
-                    />
-
-                    <Route
-                        path="/componentes"
-                        element={<ComponentesDemoPage />}
-                    />
-
-                    <Route
-                        path="/formulario-demo"
-                        element={<FormularioDemoPage />}
-                    />
-                    <Route
-                        path="/pacientes/nuevo"
-                        element={<PacienteCreatePage />}
-                    />
-                    <Route
-                        path="/pacientes/editar"
-                        element={<PacienteEditPage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/editar"
-                        element={<MedicamentoEditPage />}
-                    />
-                    <Route
-                        path="/medicamentos/editar/:id"
-                        element={<MedicamentoEditPage />}
-                    />
-                    <Route
-                        path="/medicamentos/nuevo"
-                        element={<MedicamentoCreatePage />}
-                    />
-
-                    <Route
-                        path="/medicamentos/editar/:id"
-                        element={<MedicamentoEditPage />}
-                    />
-
-
+                    {/* Ruta agregada para tu Issue #53 */}
+                    <Route path="/mapa" element={<MapaCunasPage />} />
                 </Route>
 
-                <Route
-                    path="*"
-                    element={<NotFoundPage />}
-                />
-
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </BrowserRouter>
     )
 }
-
