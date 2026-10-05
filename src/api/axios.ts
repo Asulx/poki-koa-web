@@ -1,16 +1,7 @@
 import axios from 'axios'
 
-const getBaseURL = (): string => {
-  const envUrl = import.meta.env.VITE_API_URL
-  if (envUrl) {
-    const cleaned = envUrl.trim().replace(/\/+$/, '')
-    return cleaned.endsWith('/api') ? cleaned : `${cleaned}/api`
-  }
-  return 'http://localhost:8000/api'
-}
-
 export const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -20,9 +11,11 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
     return config
   },
   (error) => Promise.reject(error)
@@ -34,19 +27,19 @@ api.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          console.error('No autorizado (401)')
+          console.error('No autorizado')
           break
+
         case 403:
-          console.error('Acceso prohibido (403)')
+          console.error('Acceso prohibido')
           break
-        case 404:
-          console.error('Recurso no encontrado (404)')
-          break
+
         case 500:
-          console.error('Error interno del servidor (500)')
+          console.error('Error servidor')
           break
       }
     }
+
     return Promise.reject(error)
   }
 )

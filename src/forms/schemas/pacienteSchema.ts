@@ -1,51 +1,51 @@
 import { z } from 'zod'
 
 export const pacienteSchema = z.object({
-  nombre_completo: z
-    .string()
-    .min(1, 'El nombre completo es obligatorio')
-    .max(200, 'El nombre no puede exceder los 200 caracteres'),
+  nombre: z.string().min(1, 'Nombre obligatorio'),
 
-  edad_meses: z.coerce
-    .number()
-    .int('La edad en meses debe ser un número entero')
-    .min(0, 'La edad debe ser mayor o igual a 0')
-    .nullable()
-    .optional(),
+  fechaNacimiento: z.string().min(
+    1,
+    'Fecha de nacimiento obligatoria'
+  ),
 
-  sexo: z
-    .enum(['M', 'F'])
-    .nullable()
-    .optional(),
+  sexo: z.string().min(1, 'Seleccione sexo'),
 
-  peso: z.coerce
-    .number()
-    .min(0.01, 'El peso debe ser mayor a 0 kg')
-    .nullable()
-    .optional(),
+  edadGestacional: z.string().min(
+    1,
+    'Edad gestacional obligatoria'
+  ),
 
-  fecha_nacimiento: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (val) => {
-        if (!val) return true
-        const fecha = new Date(val)
-        const hoy = new Date()
-        hoy.setHours(23, 59, 59, 999)
-        return fecha <= hoy
-      },
-      { message: 'La fecha de nacimiento no puede ser futura' }
-    ),
+  peso: z.number().min(
+    0.1,
+    'Peso debe ser mayor a 0'
+  ),
 
-  fecha_ingreso: z.string().nullable().optional(),
+  numeroCuna: z.string().min(
+    1,
+    'Número de cuna obligatorio'
+  ),
 
-  diagnostico: z.string().optional(),
+  fechaIngreso: z.string().min(
+    1,
+    'Fecha de ingreso obligatoria'
+  ),
 
-  plan_cuidados: z.string().optional(),
+  medicoResponsable: z.string().min(
+    1,
+    'Médico obligatorio'
+  ),
 
-  medico_a_cargo: z.coerce.number().nullable().optional(),
+  diagnostico: z.string().min(
+    1,
+    'Diagnóstico obligatorio'
+  ),
+
+  estadoCanula: z.string(),
+
+  viaIntravenosa: z.string(),
+
+  observaciones: z.string().optional(),
 })
 
-export type PacienteFormData = z.infer<typeof pacienteSchema>
+export type PacienteFormData =
+  z.infer<typeof pacienteSchema>
