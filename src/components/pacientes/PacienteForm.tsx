@@ -9,10 +9,12 @@ import {
 
 type PacienteFormProps = {
   defaultValues?: Partial<PacienteFormData>
+  onSubmit: (data: PacienteFormData) => Promise<void>
 }
 
 export default function PacienteForm({
   defaultValues,
+  onSubmit,
 }: PacienteFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -26,38 +28,40 @@ export default function PacienteForm({
     defaultValues,
   })
 
-  const onSubmit = async (
+  const handleFormSubmit = async (
     data: PacienteFormData
   ) => {
-    setIsLoading(true)
+    try {
+      setIsLoading(true)
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1500)
-    )
-
-    console.log(data)
-
-    alert('Paciente guardado correctamente')
-
-    setIsLoading(false)
+      await onSubmit(data)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <h2>Información Personal</h2>
 
       <div>
         <label>Nombre completo</label>
+
         <input {...register('nombre')} />
-        {errors.nombre && <p>{errors.nombre.message}</p>}
+
+        {errors.nombre && (
+          <p>{errors.nombre.message}</p>
+        )}
       </div>
 
       <div>
         <label>Fecha de nacimiento</label>
+
         <input
           type="date"
           {...register('fechaNacimiento')}
         />
+
         {errors.fechaNacimiento && (
           <p>{errors.fechaNacimiento.message}</p>
         )}
@@ -65,11 +69,21 @@ export default function PacienteForm({
 
       <div>
         <label>Sexo</label>
+
         <select {...register('sexo')}>
-          <option value="">Seleccione</option>
-          <option value="Femenino">Femenino</option>
-          <option value="Masculino">Masculino</option>
+          <option value="">
+            Seleccione
+          </option>
+
+          <option value="Femenino">
+            Femenino
+          </option>
+
+          <option value="Masculino">
+            Masculino
+          </option>
         </select>
+
         {errors.sexo && (
           <p>{errors.sexo.message}</p>
         )}
@@ -77,7 +91,11 @@ export default function PacienteForm({
 
       <div>
         <label>Edad gestacional</label>
-        <input {...register('edadGestacional')} />
+
+        <input
+          {...register('edadGestacional')}
+        />
+
         {errors.edadGestacional && (
           <p>{errors.edadGestacional.message}</p>
         )}
@@ -85,6 +103,7 @@ export default function PacienteForm({
 
       <div>
         <label>Peso (kg)</label>
+
         <input
           type="number"
           step="0.1"
@@ -92,6 +111,7 @@ export default function PacienteForm({
             valueAsNumber: true,
           })}
         />
+
         {errors.peso && (
           <p>{errors.peso.message}</p>
         )}
@@ -99,7 +119,11 @@ export default function PacienteForm({
 
       <div>
         <label>Número de cuna</label>
-        <input {...register('numeroCuna')} />
+
+        <input
+          {...register('numeroCuna')}
+        />
+
         {errors.numeroCuna && (
           <p>{errors.numeroCuna.message}</p>
         )}
@@ -107,10 +131,12 @@ export default function PacienteForm({
 
       <div>
         <label>Fecha de ingreso</label>
+
         <input
           type="date"
           {...register('fechaIngreso')}
         />
+
         {errors.fechaIngreso && (
           <p>{errors.fechaIngreso.message}</p>
         )}
@@ -118,17 +144,25 @@ export default function PacienteForm({
 
       <div>
         <label>Médico responsable</label>
+
         <input
           {...register('medicoResponsable')}
         />
+
         {errors.medicoResponsable && (
-          <p>{errors.medicoResponsable.message}</p>
+          <p>
+            {errors.medicoResponsable.message}
+          </p>
         )}
       </div>
 
       <div>
         <label>Diagnóstico principal</label>
-        <input {...register('diagnostico')} />
+
+        <input
+          {...register('diagnostico')}
+        />
+
         {errors.diagnostico && (
           <p>{errors.diagnostico.message}</p>
         )}
@@ -136,31 +170,62 @@ export default function PacienteForm({
 
       <div>
         <label>Estado de cánula</label>
-        <select {...register('estadoCanula')}>
-          <option value="">Seleccione</option>
-          <option value="OK">OK</option>
+
+        <select
+          {...register('estadoCanula')}
+        >
+          <option value="">
+            Seleccione
+          </option>
+
+          <option value="OK">
+            OK
+          </option>
+
           <option value="Pendiente">
             Pendiente
           </option>
         </select>
+
+        {errors.estadoCanula && (
+          <p>{errors.estadoCanula.message}</p>
+        )}
       </div>
 
       <div>
         <label>Vía intravenosa</label>
-        <select {...register('viaIntravenosa')}>
-          <option value="">Seleccione</option>
-          <option value="Activa">Activa</option>
+
+        <select
+          {...register('viaIntravenosa')}
+        >
+          <option value="">
+            Seleccione
+          </option>
+
+          <option value="Activa">
+            Activa
+          </option>
+
           <option value="Inactiva">
             Inactiva
           </option>
         </select>
+
+        {errors.viaIntravenosa && (
+          <p>{errors.viaIntravenosa.message}</p>
+        )}
       </div>
 
       <div>
         <label>Observaciones</label>
+
         <textarea
           {...register('observaciones')}
         />
+
+        {errors.observaciones && (
+          <p>{errors.observaciones.message}</p>
+        )}
       </div>
 
       <button

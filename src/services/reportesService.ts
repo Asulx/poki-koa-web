@@ -1,19 +1,35 @@
-// Simulamos una demora de red para manejar el estado "loading"
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { api } from '@/api/axios'
 
-export interface DatosReporte {
-  totalAlertas: number;
-  medicamentosAdministrados: number;
-  eventosCriticos: number;
+import type {
+  DatosReporte,
+  MetricasGenerales,
+  EstadisticaPacientes,
+} from '@/types/reporte'
+
+const REPORTES_ENDPOINT = '/reportes'
+
+export async function obtenerDatosReporte(): Promise<DatosReporte> {
+  const response = await api.get<DatosReporte>(
+    REPORTES_ENDPOINT
+  )
+
+  return response.data
 }
 
-export const obtenerDatosReporte = async (): Promise<DatosReporte> => {
-  await delay(1500); // 1.5 segundos de carga simulada
-  
-  // Datos falsos estructurados basados en las métricas clave necesarias
-  return {
-    totalAlertas: 3,
-    medicamentosAdministrados: 6,
-    eventosCriticos: 14
-  };
-};
+export async function getMetricasGenerales(): Promise<MetricasGenerales> {
+  const response = await api.get<MetricasGenerales>(
+    `${REPORTES_ENDPOINT}/metricas`
+  )
+
+  return response.data
+}
+
+export async function getEstadisticasPacientes(): Promise<
+  EstadisticaPacientes[]
+> {
+  const response = await api.get<EstadisticaPacientes[]>(
+    `${REPORTES_ENDPOINT}/pacientes`
+  )
+
+  return response.data
+}
