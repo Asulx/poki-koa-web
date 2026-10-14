@@ -1,51 +1,60 @@
+
 import { z } from 'zod'
 
-export const pacienteSchema = z.object({
-  nombre: z.string().min(1, 'Nombre obligatorio'),
+const obligatorio = (mensaje: string) =>
+  z.string().trim().min(1, mensaje)
 
-  fechaNacimiento: z.string().min(
-    1,
-    'Fecha de nacimiento obligatoria'
-  ),
+const fechaValida = (mensaje: string) =>
+  z.iso.date({ error: mensaje })
 
-  sexo: z.string().min(1, 'Seleccione sexo'),
+export const pacienteSchema = z
+  .object({
+    identificador: obligatorio('Identificador obligatorio')
+      .max(30, 'Máximo 30 caracteres'),
 
-  edadGestacional: z.string().min(
-    1,
-    'Edad gestacional obligatoria'
-  ),
+    nombre: obligatorio('Nombre obligatorio')
+      .max(200, 'Máximo 200 caracteres'),
 
-  peso: z.number().min(
-    0.1,
-    'Peso debe ser mayor a 0'
-  ),
+    fechaNacimiento: fechaValida('Fecha de nacimiento inválida'),
 
-  numeroCuna: z.string().min(
-    1,
-    'Número de cuna obligatorio'
-  ),
+    sexo: z.enum(['Femenino', 'Masculino'], {
+      error: 'Seleccione un sexo válido',
+    }),
 
-  fechaIngreso: z.string().min(
-    1,
-    'Fecha de ingreso obligatoria'
-  ),
+    edadGestacional: obligatorio('Edad gestacional obligatoria')
+      .refine(
+        (valor) =>
+          /^\d+(\.\d)?$/.test(valor) &&
+          Number(valor) > 0 &&
+          Number(valor) <= 99.9,
+        'Ingrese semanas válidas, por ejemplo 38.5'
+      ),
 
-  medicoResponsable: z.string().min(
-    1,
-    'Médico obligatorio'
-  ),
+    peso: z.number().finite().positive(
+      'El peso debe ser mayor a 0'
+    ),
 
-  diagnostico: z.string().min(
-    1,
-    'Diagnóstico obligatorio'
-  ),
+    fechaIngreso: fechaValida('Fecha de ingreso inválida'),
 
-  estadoCanula: z.string(),
+    medicoResponsable: obligatorio('Seleccione un médico'),
 
-  viaIntravenosa: z.string(),
+    diagnostico: obligatorio('Diagnóstico obligatorio'),
 
-  observaciones: z.string().optional(),
-})
+    observaciones: z.string().optional(),
+  })
+  .refine(
+    (data) => data.fechaNacimiento <= data.fechaIngreso,
+    {
+      path: ['fechaIngreso'],
+      message: 'El ingreso no puede ser anterior al nacimiento',
+    }
+  )
+  .refine(
+    (data) => data.fechaNacimiento <= new Date().toISOString().slice(0, 10),
+    {
+      path: ['fechaNacimiento'],
+      message: 'La fecha de nacimiento no puede ser futura',
+    }
+  )
 
-export type PacienteFormData =
-  z.infer<typeof pacienteSchema>
+export type PacienteFormData = z.infer<typeof pacienteSchema>

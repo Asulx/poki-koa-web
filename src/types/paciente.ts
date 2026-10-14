@@ -1,8 +1,10 @@
+
 export interface Paciente {
   id: number
+  identificador: string
   nombre: string
   fechaNacimiento: string
-  sexo: string
+  sexo: 'Masculino' | 'Femenino'
   edadGestacional: string
   peso: number
   numeroCuna: string
