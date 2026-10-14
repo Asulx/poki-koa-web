@@ -1,8 +1,6 @@
+
 import { useEffect, useState } from 'react'
-import {
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import PacienteForm from '@/components/pacientes/PacienteForm'
 import { pacientesService } from '@/services/pacientesService'
@@ -14,31 +12,16 @@ export default function PacienteEditPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [paciente, setPaciente] =
-    useState<Paciente | null>(null)
-
-  const [isLoading, setIsLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState<string | null>(null)
+  const [paciente, setPaciente] = useState<Paciente | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function cargarPaciente() {
-      if (!id) {
-        setError(
-          'No se encontró el identificador del paciente.'
-        )
-        setIsLoading(false)
-        return
-      }
-
       const pacienteId = Number(id)
 
-      if (Number.isNaN(pacienteId)) {
-        setError(
-          'El identificador del paciente no es válido.'
-        )
+      if (!id || !Number.isInteger(pacienteId) || pacienteId <= 0) {
+        setError('El identificador del paciente no es válido.')
         setIsLoading(false)
         return
       }
@@ -47,21 +30,11 @@ export default function PacienteEditPage() {
         setIsLoading(true)
         setError(null)
 
-        const data =
-          await pacientesService.obtenerPorId(
-            pacienteId
-          )
-
+        const data = await pacientesService.obtenerPorId(pacienteId)
         setPaciente(data)
       } catch (error) {
-        console.error(
-          'Error al cargar el paciente:',
-          error
-        )
-
-        setError(
-          'No fue posible cargar la información del paciente.'
-        )
+        console.error('Error al cargar paciente:', error)
+        setError('No fue posible cargar la información del paciente.')
       } finally {
         setIsLoading(false)
       }
@@ -70,46 +43,23 @@ export default function PacienteEditPage() {
     cargarPaciente()
   }, [id])
 
-  const handleUpdate = async (
-    data: PacienteFormData
-  ) => {
-    if (!id) {
-      return
-    }
-
+  const handleUpdate = async (data: PacienteFormData) => {
     const pacienteId = Number(id)
 
-    if (Number.isNaN(pacienteId)) {
-      return
+    if (!Number.isInteger(pacienteId) || pacienteId <= 0) {
+      throw new Error('Identificador de paciente inválido.')
     }
 
-    try {
-      await pacientesService.actualizar(
-        pacienteId,
-        data
-      )
+    await pacientesService.actualizar(pacienteId, data)
 
-      alert(
-        'Paciente actualizado correctamente'
-      )
-
-      navigate('/pacientes')
-    } catch (error) {
-      console.error(
-        'Error al actualizar paciente:',
-        error
-      )
-
-      alert(
-        'No fue posible actualizar el paciente.'
-      )
-    }
+    alert('Paciente actualizado correctamente.')
+    navigate('/pacientes')
   }
 
   if (isLoading) {
     return (
       <div>
-        <h1>Editar Paciente</h1>
+        <h1>Editar paciente</h1>
         <p>Cargando paciente...</p>
       </div>
     )
@@ -118,8 +68,8 @@ export default function PacienteEditPage() {
   if (error) {
     return (
       <div>
-        <h1>Editar Paciente</h1>
-        <p>{error}</p>
+        <h1>Editar paciente</h1>
+        <p role="alert">{error}</p>
       </div>
     )
   }
@@ -127,20 +77,21 @@ export default function PacienteEditPage() {
   if (!paciente) {
     return (
       <div>
-        <h1>Editar Paciente</h1>
+        <h1>Editar paciente</h1>
         <p>Paciente no encontrado.</p>
       </div>
     )
   }
 
   return (
-    <>
-      <h1>Editar Paciente</h1>
+    <div>
+      <h1>Editar paciente</h1>
 
       <PacienteForm
         defaultValues={paciente}
         onSubmit={handleUpdate}
+        modo="editar"
       />
-    </>
+    </div>
   )
 }
