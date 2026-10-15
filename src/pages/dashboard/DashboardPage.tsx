@@ -16,6 +16,7 @@ export default function DashboardPage() {
 
       <div className="dashboard__content">
         <main className="dashboard__metricas">
+          {/* Aquí volvemos a encender el componente */}
           <EstadisticasResumen />
         </main>
 

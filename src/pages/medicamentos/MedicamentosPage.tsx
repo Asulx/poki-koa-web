@@ -12,17 +12,27 @@ import './MedicamentosPage.css'
 
 const PAGE_SIZE = 5
 
+// 1. Creamos una lista simulada (Mock data)
+const mockMedicamentos = [
+  { id: '1', nombre: 'Paracetamol', principioActivo: 'Paracetamol', dosis: '500mg', stock: 120 },
+  { id: '2', nombre: 'Ibuprofeno', principioActivo: 'Ibuprofeno', dosis: '400mg', stock: 50 },
+  { id: '3', nombre: 'Amoxicilina', principioActivo: 'Amoxicilina', dosis: '250mg', stock: 15 },
+  { id: '4', nombre: 'Loratadina', principioActivo: 'Loratadina', dosis: '10mg', stock: 200 },
+  { id: '5', nombre: 'Omeprazol', principioActivo: 'Omeprazol', dosis: '20mg', stock: 80 },
+  { id: '6', nombre: 'Diclofenaco', principioActivo: 'Diclofenaco', dosis: '50mg', stock: 10 },
+] as unknown as Medicamento[];
+
 export default function MedicamentosPage() {
   const navigate = useNavigate()
 
-  const [medicamentos, setMedicamentos] = useState<
-    Medicamento[]
-  >([])
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
 
   useEffect(() => {
+    // 2. Comentamos la llamada real a la API
+    /*
     getMedicamentos()
       .then((data) => {
         setMedicamentos(data)
@@ -33,6 +43,11 @@ export default function MedicamentosPage() {
       .finally(() => {
         setLoading(false)
       })
+    */
+
+    // 3. Inyectamos los datos falsos inmediatamente
+    setMedicamentos(mockMedicamentos)
+    setLoading(false)
   }, [])
 
   const totalPages = Math.max(
@@ -57,9 +72,7 @@ export default function MedicamentosPage() {
         <Button
           variant="secondary"
           onClick={() =>
-            navigate(
-              `/medicamentos/editar/${medicamento.id}`
-            )
+            navigate(`/medicamentos/editar/${medicamento.id}`)
           }
         >
           Editar
