@@ -15,9 +15,7 @@ const PAGE_SIZE = 5
 export default function MedicamentosPage() {
   const navigate = useNavigate()
 
-  const [medicamentos, setMedicamentos] = useState<
-    Medicamento[]
-  >([])
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
@@ -57,9 +55,7 @@ export default function MedicamentosPage() {
         <Button
           variant="secondary"
           onClick={() =>
-            navigate(
-              `/medicamentos/editar/${medicamento.id}`
-            )
+            navigate(`/medicamentos/editar/${medicamento.id}`)
           }
         >
           Editar
