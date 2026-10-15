@@ -27,7 +27,7 @@ export default function MapaCunasPage() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<EstadoCuna | 'todos'>('todos');
 
-  // Carga inicial de cunas desde el backend[cite: 7]
+  // Carga inicial de cunas desde el backend
   useEffect(() => {
     const obtenerCunas = async () => {
       try {
@@ -62,7 +62,7 @@ export default function MapaCunasPage() {
     });
   }, [cunas, busqueda, filtroEstado]);
 
-  // Manejador de clics según Escenarios BDD[cite: 8]
+  // Manejador de clics según Escenarios BDD
   const manejarClicCuna = (cuna: Cuna) => {
     if (cuna.estado === 'ocupada') {
       // Escenario 1: Redirigir a vista detallada 
