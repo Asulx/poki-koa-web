@@ -8,16 +8,19 @@ import MainLayout from '@/components/layout/MainLayout'
 
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import PacientesPage from '@/pages/pacientes/PacientesPage'
+import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
+import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
+import PacienteDetalle from '@/pages/pacientes/PacienteDetalle'
+
 import MedicamentosPage from '@/pages/medicamentos/MedicamentosPage'
+import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage'
 import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage'
+
 import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
 import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
-import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
-import PacienteEditPage from '@/pages/pacientes/PacienteEditPage'
-import PacienteDetalle from '@/pages/pacientes/PacienteDetalle'
 
 export default function AppRouter() {
   return (
@@ -25,16 +28,14 @@ export default function AppRouter() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<DashboardPage />} />
+
           <Route path="/pacientes" element={<PacientesPage />} />
           <Route path="/pacientes/nuevo" element={<PacienteCreatePage />} />
-          <Route path="/pacientes/editar" element={<PacienteEditPage />} />
+          <Route path="/pacientes/editar/:id" element={<PacienteEditPage />} />
           <Route path="/pacientes/detalle" element={<PacienteDetalle />} />
 
           <Route path="/medicamentos" element={<MedicamentosPage />} />
-          <Route
-            path="/medicamentos/editar"
-            element={<MedicamentoEditPage />}
-          />
+          <Route path="/medicamentos/nuevo" element={<MedicamentoCreatePage />} />
           <Route
             path="/medicamentos/editar/:id"
             element={<MedicamentoEditPage />}
