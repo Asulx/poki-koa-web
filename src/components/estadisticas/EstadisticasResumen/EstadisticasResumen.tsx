@@ -3,11 +3,6 @@ import { useEffect, useState } from 'react'
 import EstadisticaCard from '@/components/estadisticas/EstadisticaCard/EstadisticaCard'
 import PacientesChart from '@/components/estadisticas/PacientesChart/PacientesChart'
 
-import {
-  getEstadisticasPacientes,
-  getMetricasGenerales,
-} from '@/services/reportesService'
-
 import type {
   EstadisticaPacientes,
   MetricasGenerales,
@@ -34,6 +29,8 @@ export default function EstadisticasResumen() {
         setIsLoading(true)
         setError(null)
 
+        // 1. Comentamos la llamada real al backend
+        /*
         const [
           metricasResponse,
           pacientesResponse,
@@ -41,17 +38,30 @@ export default function EstadisticasResumen() {
           getMetricasGenerales(),
           getEstadisticasPacientes(),
         ])
+        */
+
+        // 2. Inyectamos datos simulados para que el frontend funcione solo
+        const metricasResponse = {
+          totalPacientes: 24,
+          pacientesActivos: 15,
+          totalMedicamentos: 120,
+          medicamentosStockCritico: 5
+        } as MetricasGenerales;
+
+        const pacientesResponse = [
+          { mes: 'Ene', cantidad: 10 },
+          { mes: 'Feb', cantidad: 15 },
+          { mes: 'Mar', cantidad: 20 },
+          { mes: 'Abr', cantidad: 18 }
+        ] as unknown as EstadisticaPacientes[];
 
         setMetricas(metricasResponse)
-        setEstadisticasPacientes(
-          pacientesResponse
-        )
+        setEstadisticasPacientes(pacientesResponse)
       } catch (error) {
         console.error(
           'Error al cargar estadísticas:',
           error
         )
-
         setError(
           'No fue posible cargar las estadísticas.'
         )

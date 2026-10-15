@@ -5,7 +5,9 @@ import {
 } from 'react-router-dom'
 
 import MainLayout from '@/components/layout/MainLayout'
+import RutaProtegida from '@/components/auth/RutaProtegida'
 
+import LoginPage from '@/pages/login/LoginPage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import PacientesPage from '@/pages/pacientes/PacientesPage'
 import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage'
@@ -18,7 +20,11 @@ import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage'
 
 import ReportesPage from '@/pages/reportes/ReportesPage'
 import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage'
+import TurnosPage from '@/pages/turnos/TurnosPage'
+import MisCunasPage from '@/pages/turnos/MisCunasPage'
+import PortalApoderadoPage from '@/pages/portal/PortalApoderadoPage'
 import { NotFoundPage } from '@/pages/notfound/NotFoundPage'
+
 import ComponentesDemoPage from '@/pages/ComponentesDemoPage'
 import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage'
 

@@ -24,8 +24,4 @@ export default function Header({ onMenuClick }: HeaderProps) {
       </div>
     </header>
   )
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> rama-temporal
