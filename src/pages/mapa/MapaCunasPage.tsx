@@ -27,26 +27,56 @@ export default function MapaCunasPage() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<EstadoCuna | 'todos'>('todos');
 
-  // Carga inicial de cunas desde el backend
+  // Carga inicial y conexión WebSocket para tiempo real
   useEffect(() => {
+    // 1. Carga inicial tradicional (HTTP GET) para tener los datos de inmediato
     const obtenerCunas = async () => {
       try {
         const respuesta = await api.get('/api/cots'); 
-        
-        // Programación defensiva: aseguramos que sea un arreglo
         const cunasDelBackend = Array.isArray(respuesta.data) 
           ? respuesta.data 
           : (respuesta.data?.data || []); 
-
+          
         if (cunasDelBackend.length > 0) {
           setCunas(cunasDelBackend);
         }
       } catch (error) {
-        console.error('Error al conectar con el backend:', error);
+        console.error('Error al obtener cunas iniciales:', error);
+      }
+    };
+    obtenerCunas();
+
+    // 2. Abrir el túnel WebSocket hacia el backend
+    // Nota: Ajusta el puerto (8000) si tu backend de Django corre en otro puerto
+    const socket = new WebSocket('ws://localhost:8000/ws/cots/');
+
+    socket.onopen = () => {
+      console.log('Conectado al servidor de tiempo real de Poki Koa');
+    };
+
+    socket.onmessage = (event) => {
+      const mensaje = JSON.parse(event.data);
+      
+      if (mensaje.type === 'actualizacion_cuna') {
+        const cunaActualizada = mensaje.data;
+        
+        // Actualizamos solo la cuna que cambió dentro del estado de React
+        setCunas((cunasAnteriores) => 
+          cunasAnteriores.map((cuna) => 
+            cuna.id === cunaActualizada.id ? cunaActualizada : cuna
+          )
+        );
       }
     };
 
-    obtenerCunas();
+    socket.onerror = (error) => {
+      console.error('Error en el túnel WebSocket:', error);
+    };
+
+    // 3. Programación defensiva: cerrar el túnel si el usuario sale del mapa
+    return () => {
+      socket.close();
+    };
   }, []);
 
   // Lógica de filtrado cruda
