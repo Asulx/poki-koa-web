@@ -1,23 +1,26 @@
-import { useNavigate } from 'react-router-dom'
+interface HeaderProps {
+  onMenuClick?: () => void
+}
 
-import { useAuth } from '@/context/AuthContext'
-
-export default function Header() {
-  const { usuario, cerrarSesion } = useAuth()
-  const navigate = useNavigate()
-
-  const salir = () => {
-    cerrarSesion()
-    navigate('/login')
-  }
-
+export default function Header({ onMenuClick }: HeaderProps) {
   return (
     <header className="header">
-      <h1>Panel de Administración</h1>
+      <div className="header-left">
+        <button
+          type="button"
+          className="header-menu-btn"
+          onClick={onMenuClick}
+          aria-label="Abrir menú"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+          </svg>
+        </button>
+        <h1>Panel de Administración</h1>
+      </div>
 
-      <div>
-        {usuario?.nombre} ({usuario?.rol}){' '}
-        <button onClick={salir}>Cerrar sesión</button>
+      <div className="header-user">
+        Usuario
       </div>
     </header>
   )
