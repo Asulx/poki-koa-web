@@ -1,0 +1,38 @@
+.dashboard {
+  text-align: left;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.kpi-valor {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.consola {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.consola li {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border-left: 6px solid;
+}
+
+.alerta-critica {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.alerta-advertencia {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
