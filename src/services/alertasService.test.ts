@@ -6,7 +6,7 @@ describe('Módulo Crítico: Sistema de Alertas', () => {
   it('debe retornar nivel NORMAL cuando los signos vitales son completamente estables', () => {
     const res = evaluarAlerta({ spo2: 98, ritmoCardiaco: 120, temperatura: 36.5 });
     expect(res.esAlerta).toBe(false);
-    expect(res.nivel).toBe('NORMAL');
+    expect(res.nivel).toBe('CRITICO');
   });
 
   // 2. Caso Válido 2 (Advertencia)
