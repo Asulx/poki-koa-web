@@ -1,0 +1,32 @@
+name: CI Poki-Koa Web
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verificacion:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias limpias
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar compilación
+        run: npm run build
+
+      - name: Ejecutar pruebas con cobertura
+        run: npm run test:coverage
