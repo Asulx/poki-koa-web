@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import './PacienteDetalle.css';
 
 export default function PacienteDetalle() {

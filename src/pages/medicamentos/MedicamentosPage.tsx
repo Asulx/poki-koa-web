@@ -5,7 +5,7 @@ import Button from '@/components/ui/Button/Button'
 import Table, {
   type TableColumn,
 } from '@/components/ui/Table/Table'
-import { getMedicamentos } from '@/services/medicamentosService'
+//import { getMedicamentos } from '@/services/medicamentosService'
 import type { Medicamento } from '@/types/medicamento'
 
 import './MedicamentosPage.css'
@@ -27,7 +27,7 @@ export default function MedicamentosPage() {
 
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [error] = useState('')
   const [page, setPage] = useState(1)
 
   useEffect(() => {

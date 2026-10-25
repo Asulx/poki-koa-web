@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
 import { TOKEN_KEY } from '@/services/api'
-import { login } from '@/services/authService'
+//import { login } from '@/services/authService'
 import type { Usuario } from '@/types/auth'
 
 const USUARIO_KEY = 'pokikoa_usuario'
@@ -26,7 +26,7 @@ function leerUsuarioGuardado(): Usuario | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(leerUsuarioGuardado)
 
-  const iniciarSesion = async (username: string, password: string) => {
+  const iniciarSesion = async (username: string, _password: string) => {
     // 1. Comentamos la llamada real al backend
     // const { token, ...datosUsuario } = await login(username, password)
     
