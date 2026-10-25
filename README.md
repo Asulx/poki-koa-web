@@ -1,15 +1,27 @@
 # Poki Koa - Lectura y manejo de datos
 ## Requisitos
 
-- Node v24.19.0
-- npm 11.17.0
+- Node v22.17.0
+- npm 10.9.2
 
 ## Clonar el repositorio
 
 ```bash
-git clone https://github.com/Asulx/poki-koa-web.git
+git clone [https://github.com/Asulx/poki-koa-web.git](https://github.com/Asulx/poki-koa-web.git)
 cd poki-koa-web
 ```
+## Configuración del Entorno
+
+1. Crea tu archivo de entorno local copiando la plantilla:
+
+```bash
+cp .env.example .env
+```
+
+2. Configura las variables necesarias:
+
+| Variable | Descripción | Formato/Ejemplo | Obligatoriedad |
+| VITE_API_URL | URL base para la comunicación con el backend | http://localhost:3000/api | Obligatoria |
 
 ## Inicializar el frontend
 
@@ -26,7 +38,13 @@ npm --version
 npm install
 ```
 
-3. Ejecutar la web
+3. Construir el proyecto para producción.
+
+```bash
+npm run build
+```
+
+4. Ejecutar la web
 
 ```bash
 npm run dev
