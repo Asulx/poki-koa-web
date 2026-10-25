@@ -21,6 +21,7 @@ cp .env.example .env
 2. Configura las variables necesarias:
 
 | Variable | Descripción | Formato/Ejemplo | Obligatoriedad |
+|-----------|-------------|-----------------|----------------|
 | VITE_API_URL | URL base para la comunicación con el backend | http://localhost:3000/api | Obligatoria |
 
 ## Inicializar el frontend
