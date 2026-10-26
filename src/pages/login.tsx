@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
-import './Login.css';
+import React, { useState } from "react";
+import "./Login.css";
 
 export default function Login() {
-  const [usuario, setUsuario] = useState('');
-  const [password, setPassword] = useState('');
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
 
   // Estructura de datos para renderizar la lista dinámicamente
   const demoUsers = [
-    { id: 1, init: 'AL', name: 'Dra. Ana López', role: 'Médico Neonatólogo', tag: 'ADMIN' },
-    { id: 2, init: 'CR', name: 'Dr. Carlos Ramírez', role: 'Neonatólogo', tag: 'ADMIN' },
-    { id: 3, init: 'RP', name: 'Enf. Rosa Pérez', role: 'Enfermera Jefe', tag: 'ENFERMERÍA' },
+    {
+      id: 1,
+      init: "AL",
+      name: "Dra. Ana López",
+      role: "Médico Neonatólogo",
+      tag: "ADMIN",
+    },
+    {
+      id: 2,
+      init: "CR",
+      name: "Dr. Carlos Ramírez",
+      role: "Neonatólogo",
+      tag: "ADMIN",
+    },
+    {
+      id: 3,
+      init: "RP",
+      name: "Enf. Rosa Pérez",
+      role: "Enfermera Jefe",
+      tag: "ENFERMERÍA",
+    },
   ];
 
   const handleLogin = (e: React.FormEvent) => {
@@ -43,7 +61,9 @@ export default function Login() {
           <div className="input-group">
             <div className="label-row">
               <label>CONTRASEÑA</label>
-              <a href="#" className="forgot-link">¿Olvidaste tu contraseña?</a>
+              <a href="#" className="forgot-link">
+                ¿Olvidaste tu contraseña?
+              </a>
             </div>
             <input
               type="password"
@@ -59,7 +79,9 @@ export default function Login() {
         </form>
 
         <section className="demo-section">
-          <p className="demo-hint">PERSONAL CLÍNICO (DEMO - CONTRASEÑA: 1234)</p>
+          <p className="demo-hint">
+            PERSONAL CLÍNICO (DEMO - CONTRASEÑA: 1234)
+          </p>
           <div className="user-list">
             {demoUsers.map((user) => (
               <div key={user.id} className="user-row">
@@ -68,7 +90,9 @@ export default function Login() {
                   <span className="user-name">{user.name}</span>
                   <span className="user-role">{user.role}</span>
                 </div>
-                <span className={`tag ${user.tag.toLowerCase()}`}>{user.tag}</span>
+                <span className={`tag ${user.tag.toLowerCase()}`}>
+                  {user.tag}
+                </span>
               </div>
             ))}
           </div>

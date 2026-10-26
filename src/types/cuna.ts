@@ -1,4 +1,4 @@
-export type EstadoCuna = 'disponible' | 'ocupada' | 'mantenimiento';
+export type EstadoCuna = "disponible" | "ocupada" | "mantenimiento";
 
 export interface Cuna {
   id: string; // Formato requerido: Cuna-01[cite: 16]

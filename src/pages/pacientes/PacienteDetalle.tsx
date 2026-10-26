@@ -1,5 +1,5 @@
-import React from 'react';
-import './PacienteDetalle.css';
+import React from "react";
+import "./PacienteDetalle.css";
 
 export default function PacienteDetalle() {
   return (
@@ -36,7 +36,7 @@ export default function PacienteDetalle() {
       </section>
 
       <h2 className="section-title">Monitor de Signos Vitales</h2>
-      
+
       <section className="vital-signs-grid">
         {/* Tarjeta Frecuencia Cardíaca */}
         <div className="vital-card hr-card">

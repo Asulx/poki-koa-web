@@ -1,18 +1,18 @@
-import Button from '@/components/ui/Button/Button'
+import Button from "@/components/ui/Button/Button";
 
-import './PacientesFiltros.css'
+import "./PacientesFiltros.css";
 
 type PacientesFiltrosProps = {
-  busqueda: string
-  sexo: string
-  fechaIngreso: string
-  estadoCanula: string
-  onBusquedaChange: (value: string) => void
-  onSexoChange: (value: string) => void
-  onFechaIngresoChange: (value: string) => void
-  onEstadoCanulaChange: (value: string) => void
-  onLimpiar: () => void
-}
+  busqueda: string;
+  sexo: string;
+  fechaIngreso: string;
+  estadoCanula: string;
+  onBusquedaChange: (value: string) => void;
+  onSexoChange: (value: string) => void;
+  onFechaIngresoChange: (value: string) => void;
+  onEstadoCanulaChange: (value: string) => void;
+  onLimpiar: () => void;
+};
 
 export default function PacientesFiltros({
   busqueda,
@@ -26,100 +26,71 @@ export default function PacientesFiltros({
   onLimpiar,
 }: PacientesFiltrosProps) {
   const hayFiltrosActivos =
-    busqueda !== '' ||
-    sexo !== '' ||
-    fechaIngreso !== '' ||
-    estadoCanula !== ''
+    busqueda !== "" ||
+    sexo !== "" ||
+    fechaIngreso !== "" ||
+    estadoCanula !== "";
 
   return (
     <section className="pacientes-filtros">
       <div className="pacientes-filtros__busqueda">
-        <label htmlFor="busqueda-paciente">
-          Buscar paciente
-        </label>
+        <label htmlFor="busqueda-paciente">Buscar paciente</label>
 
         <input
           id="busqueda-paciente"
           type="search"
           placeholder="Buscar por nombre o identificador"
           value={busqueda}
-          onChange={(event) =>
-            onBusquedaChange(event.target.value)
-          }
+          onChange={(event) => onBusquedaChange(event.target.value)}
         />
       </div>
 
       <div className="pacientes-filtros__controles">
         <div className="pacientes-filtros__campo">
-          <label htmlFor="filtro-sexo">
-            Sexo
-          </label>
+          <label htmlFor="filtro-sexo">Sexo</label>
 
           <select
             id="filtro-sexo"
             value={sexo}
-            onChange={(event) =>
-              onSexoChange(event.target.value)
-            }
+            onChange={(event) => onSexoChange(event.target.value)}
           >
             <option value="">Todos</option>
-            <option value="Masculino">
-              Masculino
-            </option>
-            <option value="Femenino">
-              Femenino
-            </option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
           </select>
         </div>
 
         <div className="pacientes-filtros__campo">
-          <label htmlFor="filtro-fecha-ingreso">
-            Fecha de ingreso
-          </label>
+          <label htmlFor="filtro-fecha-ingreso">Fecha de ingreso</label>
 
           <input
             id="filtro-fecha-ingreso"
             type="date"
             value={fechaIngreso}
-            onChange={(event) =>
-              onFechaIngresoChange(
-                event.target.value
-              )
-            }
+            onChange={(event) => onFechaIngresoChange(event.target.value)}
           />
         </div>
 
         <div className="pacientes-filtros__campo">
-          <label htmlFor="filtro-canula">
-            Estado de cánula
-          </label>
+          <label htmlFor="filtro-canula">Estado de cánula</label>
 
           <select
             id="filtro-canula"
             value={estadoCanula}
-            onChange={(event) =>
-              onEstadoCanulaChange(
-                event.target.value
-              )
-            }
+            onChange={(event) => onEstadoCanulaChange(event.target.value)}
           >
             <option value="">Todos</option>
             <option value="OK">OK</option>
-            <option value="Pendiente">
-              Pendiente
-            </option>
+            <option value="Pendiente">Pendiente</option>
           </select>
         </div>
 
         <div className="pacientes-filtros__accion">
-          <Button
-            disabled={!hayFiltrosActivos}
-            onClick={onLimpiar}
-          >
+          <Button disabled={!hayFiltrosActivos} onClick={onLimpiar}>
             Limpiar filtros
           </Button>
         </div>
       </div>
     </section>
-  )
+  );
 }

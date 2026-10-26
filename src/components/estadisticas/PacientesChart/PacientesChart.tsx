@@ -6,29 +6,25 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts'
+} from "recharts";
 
-import type { EstadisticaPacientes } from '@/types/reporte'
+import type { EstadisticaPacientes } from "@/types/reporte";
 
-import './PacientesChart.css'
+import "./PacientesChart.css";
 
 type PacientesChartProps = {
-  data: EstadisticaPacientes[]
-}
+  data: EstadisticaPacientes[];
+};
 
-export default function PacientesChart({
-  data,
-}: PacientesChartProps) {
-
+export default function PacientesChart({ data }: PacientesChartProps) {
   // Evita enviar datos inválidos a Recharts
-  const datosSeguros = Array.isArray(data) ? data : []
+  const datosSeguros = Array.isArray(data) ? data : [];
 
   return (
     <section className="pacientes-chart">
       <h2>Flujo de pacientes</h2>
 
       <div className="pacientes-chart__container">
-
         {datosSeguros.length === 0 ? (
           <p>No hay estadísticas disponibles.</p>
         ) : (
@@ -51,8 +47,7 @@ export default function PacientesChart({
             </LineChart>
           </ResponsiveContainer>
         )}
-
       </div>
     </section>
-  )
+  );
 }

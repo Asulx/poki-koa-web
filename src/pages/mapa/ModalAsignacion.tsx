@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import type { Cuna } from '@/types/cuna';
-import './ModalAsignacion.css';
+import { useState } from "react";
+import type { Cuna } from "@/types/cuna";
+import "./ModalAsignacion.css";
 
 interface ModalAsignacionProps {
   cuna: Cuna;
@@ -8,8 +8,12 @@ interface ModalAsignacionProps {
   onAsignar: (pacienteNombre: string) => void;
 }
 
-export default function ModalAsignacion({ cuna, onClose, onAsignar }: ModalAsignacionProps) {
-  const [nombrePaciente, setNombrePaciente] = useState('');
+export default function ModalAsignacion({
+  cuna,
+  onClose,
+  onAsignar,
+}: ModalAsignacionProps) {
+  const [nombrePaciente, setNombrePaciente] = useState("");
 
   const manejarEnvio = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +29,11 @@ export default function ModalAsignacion({ cuna, onClose, onAsignar }: ModalAsign
           <h3>Asignar Paciente</h3>
           <span className="modal-cuna-id">{cuna.id}</span>
         </div>
-        
+
         <form onSubmit={manejarEnvio} className="modal-cuerpo">
           <label htmlFor="paciente">Nombre del Recién Nacido Registrado:</label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             id="paciente"
             placeholder="Ej. Juan Pérez"
             value={nombrePaciente}
@@ -37,7 +41,7 @@ export default function ModalAsignacion({ cuna, onClose, onAsignar }: ModalAsign
             autoFocus
             required
           />
-          
+
           <div className="modal-acciones">
             <button type="button" className="btn-cancelar" onClick={onClose}>
               Cancelar

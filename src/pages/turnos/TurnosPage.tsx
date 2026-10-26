@@ -1,8 +1,8 @@
 // Vista de jefatura: formulario para asignar + lista de asignaciones del día elegido.
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from "react";
 
-import Button from '@/components/ui/Button/Button'
-import Table, { type TableColumn } from '@/components/ui/Table/Table'
+import Button from "@/components/ui/Button/Button";
+import Table, { type TableColumn } from "@/components/ui/Table/Table";
 import {
   crearAsignacion,
   eliminarAsignacion,
@@ -10,86 +10,90 @@ import {
   getCunas,
   getPersonal,
   getTurnos,
-} from '@/services/turnosService'
-import type { Asignacion, CunaResumen, Personal, Turno } from '@/types/turnos'
-import { hoyISO } from '@/utils/fechas'
+} from "@/services/turnosService";
+import type { Asignacion, CunaResumen, Personal, Turno } from "@/types/turnos";
+import { hoyISO } from "@/utils/fechas";
 
 export default function TurnosPage() {
-  const [fecha, setFecha] = useState(hoyISO())
-  const [turnos, setTurnos] = useState<Turno[]>([])
-  const [personal, setPersonal] = useState<Personal[]>([])
-  const [cunas, setCunas] = useState<CunaResumen[]>([])
-  const [asignaciones, setAsignaciones] = useState<Asignacion[]>([])
-  const [form, setForm] = useState({ usuario: '', cuna: '', turno: '' })
-  const [error, setError] = useState('')
+  const [fecha, setFecha] = useState(hoyISO());
+  const [turnos, setTurnos] = useState<Turno[]>([]);
+  const [personal, setPersonal] = useState<Personal[]>([]);
+  const [cunas, setCunas] = useState<CunaResumen[]>([]);
+  const [asignaciones, setAsignaciones] = useState<Asignacion[]>([]);
+  const [form, setForm] = useState({ usuario: "", cuna: "", turno: "" });
+  const [error, setError] = useState("");
 
   // Datos que casi no cambian: se cargan una sola vez
   useEffect(() => {
     Promise.all([getTurnos(), getPersonal(), getCunas()])
       .then(([t, p, c]) => {
-        setTurnos(t)
-        setPersonal(p)
-        setCunas(c)
+        setTurnos(t);
+        setPersonal(p);
+        setCunas(c);
       })
-      .catch((err: Error) => setError(err.message))
-  }, [])
+      .catch((err: Error) => setError(err.message));
+  }, []);
 
   // La lista de asignaciones se recarga cada vez que cambia la fecha
   useEffect(() => {
     getAsignaciones(fecha)
       .then(setAsignaciones)
-      .catch((err: Error) => setError(err.message))
-  }, [fecha])
+      .catch((err: Error) => setError(err.message));
+  }, [fecha]);
 
   const guardar = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
     try {
       await crearAsignacion({
         usuario: Number(form.usuario),
         cuna: Number(form.cuna),
         turno: Number(form.turno),
         fecha,
-      })
-      setAsignaciones(await getAsignaciones(fecha))
+      });
+      setAsignaciones(await getAsignaciones(fecha));
     } catch (err) {
       // Aquí llega, por ejemplo, el mensaje de "asignación duplicada" del backend
-      setError(err instanceof Error ? err.message : 'No se pudo guardar')
+      setError(err instanceof Error ? err.message : "No se pudo guardar");
     }
-  }
+  };
 
   const borrar = async (id: number) => {
-    if (!window.confirm('¿Eliminar esta asignación?')) return
+    if (!window.confirm("¿Eliminar esta asignación?")) return;
     try {
-      await eliminarAsignacion(id)
-      setAsignaciones((actuales) => actuales.filter((a) => a.id !== id))
+      await eliminarAsignacion(id);
+      setAsignaciones((actuales) => actuales.filter((a) => a.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar')
+      setError(err instanceof Error ? err.message : "No se pudo eliminar");
     }
-  }
+  };
 
   const columnas: TableColumn<Asignacion>[] = [
-    { key: 'usuario_nombre', label: 'Profesional' },
-    { key: 'cuna_identificador', label: 'Cuna' },
-    { key: 'turno_nombre', label: 'Turno' },
+    { key: "usuario_nombre", label: "Profesional" },
+    { key: "cuna_identificador", label: "Cuna" },
+    { key: "turno_nombre", label: "Turno" },
     {
-      key: 'acciones',
-      label: 'Acciones',
+      key: "acciones",
+      label: "Acciones",
       render: (a) => (
         <Button variant="secondary" onClick={() => borrar(a.id)}>
           Eliminar
         </Button>
       ),
     },
-  ]
+  ];
 
   return (
-    <div style={{ textAlign: 'left' }}>
+    <div style={{ textAlign: "left" }}>
       <h1>Turnos y Asignación de Cunas</h1>
 
       <div>
         <label>Fecha </label>
-        <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+        <input
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+        />
       </div>
 
       <form onSubmit={guardar} style={{ marginTop: 16 }}>
@@ -111,7 +115,9 @@ export default function TurnosPage() {
         >
           <option value="">Cuna</option>
           {cunas.map((c) => (
-            <option key={c.id} value={c.id}>{c.identificador}</option>
+            <option key={c.id} value={c.id}>
+              {c.identificador}
+            </option>
           ))}
         </select>
 
@@ -127,14 +133,17 @@ export default function TurnosPage() {
           ))}
         </select>
 
-        <button type="submit" disabled={!form.usuario || !form.cuna || !form.turno}>
+        <button
+          type="submit"
+          disabled={!form.usuario || !form.cuna || !form.turno}
+        >
           Asignar
         </button>
       </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <Table columns={columnas} data={asignaciones} rowKey={(a) => a.id} />
     </div>
-  )
+  );
 }

@@ -1,46 +1,46 @@
 export type Turno = {
-  id: number
-  nombre: string
-  hora_inicio: string // "08:00:00"
-  hora_fin: string
-}
+  id: number;
+  nombre: string;
+  hora_inicio: string; // "08:00:00"
+  hora_fin: string;
+};
 
 export type Personal = {
-  id: number
-  username: string
-  nombre: string
-  rol: string
-}
+  id: number;
+  username: string;
+  nombre: string;
+  rol: string;
+};
 
 export type CunaResumen = {
-  id: number
-  identificador: string
-}
+  id: number;
+  identificador: string;
+};
 
 export type Asignacion = {
-  id: number
-  usuario: number
-  usuario_nombre: string
-  cuna: number
-  cuna_identificador: string
-  turno: number
-  turno_nombre: string
-  fecha: string
-}
+  id: number;
+  usuario: number;
+  usuario_nombre: string;
+  cuna: number;
+  cuna_identificador: string;
+  turno: number;
+  turno_nombre: string;
+  fecha: string;
+};
 
 export type NuevaAsignacion = {
-  usuario: number
-  cuna: number
-  turno: number
-  fecha: string
-}
+  usuario: number;
+  cuna: number;
+  turno: number;
+  fecha: string;
+};
 
 // Lo que devuelve /asignaciones/mis-cunas/ (CunaSerializer del backend)
 export type CunaAsignada = {
-  id: number
-  identificador: string
-  ritmo_cardiaco: number | null
-  spo2: number | null
-  temperatura: number | null
-  paciente_detalle: { nombre: string; diagnostico: string | null } | null
-}
+  id: number;
+  identificador: string;
+  ritmo_cardiaco: number | null;
+  spo2: number | null;
+  temperatura: number | null;
+  paciente_detalle: { nombre: string; diagnostico: string | null } | null;
+};

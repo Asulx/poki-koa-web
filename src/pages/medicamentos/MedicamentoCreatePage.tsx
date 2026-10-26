@@ -1,4 +1,4 @@
-import MedicamentoForm from '@/components/medicamentos/MedicamentoForm'
+import MedicamentoForm from "@/components/medicamentos/MedicamentoForm";
 
 export default function MedicamentoCreatePage() {
   return (
@@ -6,5 +6,5 @@ export default function MedicamentoCreatePage() {
       <h1>Registrar Medicamento</h1>
       <MedicamentoForm />
     </>
-  )
+  );
 }

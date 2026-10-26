@@ -84,3 +84,21 @@ Ejemplo:
 ```ts
 import Button from '@/components/ui/Button'
 ```
+
+## Convenciones de Código y Formateo
+
+Este proyecto utiliza Prettier para mantener un estilo de código consistente y automatizado.
+
+### Comandos disponibles:
+
+1. Formatear todo el código automáticamente:
+
+```bash
+npm run format
+```
+
+2. Verificar si el código cumple con el formato acordado (ideal para antes de un Pull Request):
+
+```bash
+npm run format:check
+```

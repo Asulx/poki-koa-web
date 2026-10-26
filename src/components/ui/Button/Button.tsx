@@ -1,14 +1,14 @@
-import './Button.css'
+import "./Button.css";
 
 type ButtonProps = {
-  variant?: 'primary' | 'secondary'
-  disabled?: boolean
-  onClick?: () => void
-  children: React.ReactNode
-}
+  variant?: "primary" | "secondary";
+  disabled?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+};
 
 export default function Button({
-  variant = 'primary',
+  variant = "primary",
   disabled = false,
   onClick,
   children,
@@ -21,5 +21,5 @@ export default function Button({
     >
       {children}
     </button>
-  )
+  );
 }

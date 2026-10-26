@@ -1,12 +1,12 @@
-import './Input.css'
+import "./Input.css";
 
 type InputProps = {
-  label?: string
-  placeholder?: string
-  value?: string
-  error?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  error?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
 
 export default function Input({
   label,
@@ -26,11 +26,7 @@ export default function Input({
         onChange={onChange}
       />
 
-      {error && (
-        <span className="input-error">
-          {error}
-        </span>
-      )}
+      {error && <span className="input-error">{error}</span>}
     </div>
-  )
+  );
 }

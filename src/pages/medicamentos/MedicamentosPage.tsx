@@ -1,34 +1,68 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import Button from '@/components/ui/Button/Button'
-import Table, {
-  type TableColumn,
-} from '@/components/ui/Table/Table'
-import { getMedicamentos } from '@/services/medicamentosService'
-import type { Medicamento } from '@/types/medicamento'
+import Button from "@/components/ui/Button/Button";
+import Table, { type TableColumn } from "@/components/ui/Table/Table";
+import { getMedicamentos } from "@/services/medicamentosService";
+import type { Medicamento } from "@/types/medicamento";
 
-import './MedicamentosPage.css'
+import "./MedicamentosPage.css";
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 5;
 
 // 1. Creamos una lista simulada (Mock data)
 const mockMedicamentos = [
-  { id: '1', nombre: 'Paracetamol', principioActivo: 'Paracetamol', dosis: '500mg', stock: 120 },
-  { id: '2', nombre: 'Ibuprofeno', principioActivo: 'Ibuprofeno', dosis: '400mg', stock: 50 },
-  { id: '3', nombre: 'Amoxicilina', principioActivo: 'Amoxicilina', dosis: '250mg', stock: 15 },
-  { id: '4', nombre: 'Loratadina', principioActivo: 'Loratadina', dosis: '10mg', stock: 200 },
-  { id: '5', nombre: 'Omeprazol', principioActivo: 'Omeprazol', dosis: '20mg', stock: 80 },
-  { id: '6', nombre: 'Diclofenaco', principioActivo: 'Diclofenaco', dosis: '50mg', stock: 10 },
+  {
+    id: "1",
+    nombre: "Paracetamol",
+    principioActivo: "Paracetamol",
+    dosis: "500mg",
+    stock: 120,
+  },
+  {
+    id: "2",
+    nombre: "Ibuprofeno",
+    principioActivo: "Ibuprofeno",
+    dosis: "400mg",
+    stock: 50,
+  },
+  {
+    id: "3",
+    nombre: "Amoxicilina",
+    principioActivo: "Amoxicilina",
+    dosis: "250mg",
+    stock: 15,
+  },
+  {
+    id: "4",
+    nombre: "Loratadina",
+    principioActivo: "Loratadina",
+    dosis: "10mg",
+    stock: 200,
+  },
+  {
+    id: "5",
+    nombre: "Omeprazol",
+    principioActivo: "Omeprazol",
+    dosis: "20mg",
+    stock: 80,
+  },
+  {
+    id: "6",
+    nombre: "Diclofenaco",
+    principioActivo: "Diclofenaco",
+    dosis: "50mg",
+    stock: 10,
+  },
 ] as unknown as Medicamento[];
 
 export default function MedicamentosPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [page, setPage] = useState(1)
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     // 2. Comentamos la llamada real a la API
@@ -46,40 +80,35 @@ export default function MedicamentosPage() {
     */
 
     // 3. Inyectamos los datos falsos inmediatamente
-    setMedicamentos(mockMedicamentos)
-    setLoading(false)
-  }, [])
+    setMedicamentos(mockMedicamentos);
+    setLoading(false);
+  }, []);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(medicamentos.length / PAGE_SIZE)
-  )
+  const totalPages = Math.max(1, Math.ceil(medicamentos.length / PAGE_SIZE));
 
   const visibleMedicamentos = medicamentos.slice(
     (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  )
+    page * PAGE_SIZE,
+  );
 
   const columns: TableColumn<Medicamento>[] = [
-    { key: 'nombre', label: 'Nombre' },
-    { key: 'principioActivo', label: 'Principio activo' },
-    { key: 'dosis', label: 'Dosis' },
-    { key: 'stock', label: 'Stock' },
+    { key: "nombre", label: "Nombre" },
+    { key: "principioActivo", label: "Principio activo" },
+    { key: "dosis", label: "Dosis" },
+    { key: "stock", label: "Stock" },
     {
-      key: 'acciones',
-      label: 'Acciones',
+      key: "acciones",
+      label: "Acciones",
       render: (medicamento) => (
         <Button
           variant="secondary"
-          onClick={() =>
-            navigate(`/medicamentos/editar/${medicamento.id}`)
-          }
+          onClick={() => navigate(`/medicamentos/editar/${medicamento.id}`)}
         >
           Editar
         </Button>
       ),
     },
-  ]
+  ];
 
   return (
     <div>
@@ -121,5 +150,5 @@ export default function MedicamentosPage() {
         </>
       )}
     </div>
-  )
+  );
 }

@@ -1,38 +1,48 @@
 // Solo lectura: no hay botones ni formularios.
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-import Card from '@/components/ui/Card/Card'
-import { getMisHijos } from '@/services/portalService'
-import type { HijoPortal } from '@/types/portal'
+import Card from "@/components/ui/Card/Card";
+import { getMisHijos } from "@/services/portalService";
+import type { HijoPortal } from "@/types/portal";
 
-const NO_AUTORIZADO = 'Información no disponible (no autorizada por el equipo médico)'
+const NO_AUTORIZADO =
+  "Información no disponible (no autorizada por el equipo médico)";
 
 export default function PortalApoderadoPage() {
-  const [hijos, setHijos] = useState<HijoPortal[]>([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState('')
+  const [hijos, setHijos] = useState<HijoPortal[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     getMisHijos()
       .then(setHijos)
       .catch((err: Error) => setError(err.message))
-      .finally(() => setCargando(false))
-  }, [])
+      .finally(() => setCargando(false));
+  }, []);
 
-  if (cargando) return <p>Cargando información...</p>
-  if (error) return <p style={{ color: 'red' }}>{error}</p>
-  if (hijos.length === 0) return <p>No tienes pacientes asociados a tu cuenta.</p>
+  if (cargando) return <p>Cargando información...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (hijos.length === 0)
+    return <p>No tienes pacientes asociados a tu cuenta.</p>;
 
   return (
-    <div style={{ textAlign: 'left' }}>
+    <div style={{ textAlign: "left" }}>
       <h1>Estado de mi bebé</h1>
 
       {hijos.map((hijo) => (
-        <Card key={hijo.paciente_id} title={`${hijo.nombre} (${hijo.parentesco || 'Apoderado'})`}>
-          <p>Cuna: {hijo.cuna ?? 'Sin cuna asignada'}</p>
-          <p>Sexo: {hijo.sexo} · Peso: {hijo.peso ?? '-'} kg</p>
-          <p>Nacimiento: {hijo.fecha_nacimiento ?? '-'}</p>
-          <p>Ingreso a la unidad: {new Date(hijo.fecha_ingreso).toLocaleString('es-CL')}</p>
+        <Card
+          key={hijo.paciente_id}
+          title={`${hijo.nombre} (${hijo.parentesco || "Apoderado"})`}
+        >
+          <p>Cuna: {hijo.cuna ?? "Sin cuna asignada"}</p>
+          <p>
+            Sexo: {hijo.sexo} · Peso: {hijo.peso ?? "-"} kg
+          </p>
+          <p>Nacimiento: {hijo.fecha_nacimiento ?? "-"}</p>
+          <p>
+            Ingreso a la unidad:{" "}
+            {new Date(hijo.fecha_ingreso).toLocaleString("es-CL")}
+          </p>
 
           <h3>Diagnóstico</h3>
           <p>{hijo.diagnostico ?? NO_AUTORIZADO}</p>
@@ -40,9 +50,9 @@ export default function PortalApoderadoPage() {
           <h3>Signos vitales</h3>
           {hijo.signos_vitales ? (
             <p>
-              Frecuencia cardíaca: {hijo.signos_vitales.ritmo_cardiaco ?? '-'} bpm · SpO2:{' '}
-              {hijo.signos_vitales.spo2 ?? '-'}% · Temperatura:{' '}
-              {hijo.signos_vitales.temperatura ?? '-'} °C
+              Frecuencia cardíaca: {hijo.signos_vitales.ritmo_cardiaco ?? "-"}{" "}
+              bpm · SpO2: {hijo.signos_vitales.spo2 ?? "-"}% · Temperatura:{" "}
+              {hijo.signos_vitales.temperatura ?? "-"} °C
             </p>
           ) : (
             <p>{NO_AUTORIZADO}</p>
@@ -57,7 +67,8 @@ export default function PortalApoderadoPage() {
             <ul>
               {hijo.medicamentos.map((m, i) => (
                 <li key={i}>
-                  {m.nombre} {m.dosis} ({m.via}) a las {m.hora.slice(0, 5)}: {m.estado}
+                  {m.nombre} {m.dosis} ({m.via}) a las {m.hora.slice(0, 5)}:{" "}
+                  {m.estado}
                 </li>
               ))}
             </ul>
@@ -65,5 +76,5 @@ export default function PortalApoderadoPage() {
         </Card>
       ))}
     </div>
-  )
+  );
 }

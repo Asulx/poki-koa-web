@@ -1,10 +1,10 @@
-import './EstadisticaCard.css'
+import "./EstadisticaCard.css";
 
 type EstadisticaCardProps = {
-  titulo: string
-  valor: number
-  descripcion?: string
-}
+  titulo: string;
+  valor: number;
+  descripcion?: string;
+};
 
 export default function EstadisticaCard({
   titulo,
@@ -13,19 +13,13 @@ export default function EstadisticaCard({
 }: EstadisticaCardProps) {
   return (
     <article className="estadistica-card">
-      <h3 className="estadistica-card__titulo">
-        {titulo}
-      </h3>
+      <h3 className="estadistica-card__titulo">{titulo}</h3>
 
-      <p className="estadistica-card__valor">
-        {valor}
-      </p>
+      <p className="estadistica-card__valor">{valor}</p>
 
       {descripcion && (
-        <p className="estadistica-card__descripcion">
-          {descripcion}
-        </p>
+        <p className="estadistica-card__descripcion">{descripcion}</p>
       )}
     </article>
-  )
+  );
 }

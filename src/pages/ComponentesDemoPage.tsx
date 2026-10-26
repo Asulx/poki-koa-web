@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import Button from '@/components/ui/Button/Button'
-import Card from '@/components/ui/Card/Card'
-import Input from '@/components/ui/Input/Input'
-import Modal from '@/components/ui/Modal/Modal'
-import Table from '@/components/ui/Table/Table'
+import Button from "@/components/ui/Button/Button";
+import Card from "@/components/ui/Card/Card";
+import Input from "@/components/ui/Input/Input";
+import Modal from "@/components/ui/Modal/Modal";
+import Table from "@/components/ui/Table/Table";
 
 export default function ComponentesDemoPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div>
@@ -27,28 +27,23 @@ export default function ComponentesDemoPage() {
 
       <Card title="Paciente">Información del paciente</Card>
 
-      <button onClick={() => setIsModalOpen(true)}>
-        Abrir Modal
-      </button>
+      <button onClick={() => setIsModalOpen(true)}>Abrir Modal</button>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      >
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2>Modal</h2>
         <p>Contenido del modal</p>
       </Modal>
 
       <Table
         columns={[
-          { key: 'Nombre', label: 'Nombre' },
-          { key: 'Edad', label: 'Edad' },
+          { key: "Nombre", label: "Nombre" },
+          { key: "Edad", label: "Edad" },
         ]}
         data={[
-          { Nombre: 'Juan', Edad: 25 },
-          { Nombre: 'María', Edad: 30 },
+          { Nombre: "Juan", Edad: 25 },
+          { Nombre: "María", Edad: 30 },
         ]}
       />
     </div>
-  )
+  );
 }
