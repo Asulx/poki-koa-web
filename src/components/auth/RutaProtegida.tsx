@@ -1,19 +1,31 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAuth } from '@/context/AuthContext'
-import type { Rol } from '@/types/auth'
+import { useAuth } from '@/context/AuthContext';
+import type { Rol } from '@/types/auth';
 
+/**
+ * Propiedades para el componente de guardián de rutas protegidas.
+ */
 type Props = {
-  roles?: Rol[] // si no se indica, basta con haber iniciado sesión
-}
+  /**
+   * Lista opcional de roles permitidos para acceder a la ruta.
+   * Si no se especifica, solo se requiere estar autenticado.
+   */
+  roles?: Rol[];
+};
 
-// Guarda de rutas: sin sesión -> /login; con rol equivocado -> inicio.
-// Ojo: esto es solo comodidad de UI. La seguridad real está en los permisos del backend.
+/**
+ * Guardián de rutas para controlar el acceso según el estado de autenticación y rol del usuario.
+ * Redirige a `/login` si no hay sesión activa o al inicio `/` si el usuario no posee un rol autorizado.
+ *
+ * @param props Contiene la lista opcional de roles autorizados.
+ * @returns El componente de la ruta anidada (`<Outlet />`) si cumple los permisos, o un componente de redirección (`<Navigate />`).
+ */
 export default function RutaProtegida({ roles }: Props) {
-  const { usuario } = useAuth()
+  const { usuario } = useAuth();
 
-  if (!usuario) return <Navigate to="/login" replace />
-  if (roles && !roles.includes(usuario.rol)) return <Navigate to="/" replace />
+  if (!usuario) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(usuario.rol)) return <Navigate to="/" replace />;
 
-  return <Outlet />
+  return <Outlet />;
 }

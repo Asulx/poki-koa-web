@@ -3,13 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-"scripts": {
+  "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -28,6 +30,7 @@
     "@vitejs/plugin-react": "^6.0.4",
     "@vitest/coverage-v8": "^5.0.5",
     "oxlint": "^1.75.0",
+    "prettier": "^3.9.10",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
     "vitest": "^5.0.5"

@@ -1,4 +1,10 @@
-* {
+/* ================================================================
+   Reset y Estilos Globales (Mobile First)
+   ================================================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -6,4 +12,49 @@ body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-text);
+  font-family: var(--font-family-base, sans-serif);
+}
+
+/* ================================================================
+   Estructuras y Componentes Base (Metodología BEM)
+   ================================================================ */
+
+/* Ejemplo de Bloque principal */
+.contenedor-principal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Elemento del Bloque */
+.contenedor-principal__seccion {
+  margin-bottom: 1rem;
+}
+
+/* Modificador del Bloque */
+.contenedor-principal--destacado {
+  background-color: var(--color-surface, #ffffff);
+  border-radius: 8px;
+}
+
+/* ================================================================
+   Adaptabilidad Responsiva (Mobile First)
+   ================================================================ */
+
+/* Tablets y Pantallas Medianas (A partir de 769px) */
+@media (min-width: 769px) {
+  .contenedor-principal {
+    flex-direction: row;
+    padding: 1.5rem;
+  }
+}
+
+/* Escritorio y Pantallas Grandes (A partir de 1025px) */
+@media (min-width: 1025px) {
+  .contenedor-principal {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
 }

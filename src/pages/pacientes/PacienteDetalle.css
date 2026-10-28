@@ -83,7 +83,7 @@
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .vital-header {
@@ -127,6 +127,12 @@
 }
 
 /* Colores específicos para cada métrica */
-.hr-card .vital-value { color: #EF4444; } /* Rojo para pulsaciones */
-.spo2-card .vital-value { color: #3B82F6; } /* Azul para oxígeno */
-.temp-card .vital-value { color: #F59E0B; } /* Naranja para temperatura */
+.hr-card .vital-value {
+  color: #ef4444;
+} /* Rojo para pulsaciones */
+.spo2-card .vital-value {
+  color: #3b82f6;
+} /* Azul para oxígeno */
+.temp-card .vital-value {
+  color: #f59e0b;
+} /* Naranja para temperatura */

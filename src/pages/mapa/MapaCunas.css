@@ -36,7 +36,9 @@
   border-radius: 8px;
   padding: 1rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   min-height: 120px;
@@ -44,7 +46,7 @@
 
 .cuna-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .cuna-header {

@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import Button from '@/components/ui/Button/Button'
-import Card from '@/components/ui/Card/Card'
-import Input from '@/components/ui/Input/Input'
-import Modal from '@/components/ui/Modal/Modal'
-import Table from '@/components/ui/Table/Table'
+import Button from '@/components/ui/Button/Button';
+import Card from '@/components/ui/Card/Card';
+import Input from '@/components/ui/Input/Input';
+import Modal from '@/components/ui/Modal/Modal';
+import Table from '@/components/ui/Table/Table';
 
+/**
+ * Componente de página para la demostración y validación visual de los componentes de UI del sistema.
+ * Agrupa botones, campos de entrada, tarjetas, modales y tablas bajo los estándares de diseño.
+ *
+ * @returns Un elemento JSX con la vista de demostración de componentes UI.
+ */
 export default function ComponentesDemoPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function abrirModal() {
+    setIsModalOpen(true);
+  }
+
+  function cerrarModal() {
+    setIsModalOpen(false);
+  }
 
   return (
     <div>
@@ -27,14 +41,9 @@ export default function ComponentesDemoPage() {
 
       <Card title="Paciente">Información del paciente</Card>
 
-      <button onClick={() => setIsModalOpen(true)}>
-        Abrir Modal
-      </button>
+      <button onClick={abrirModal}>Abrir Modal</button>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      >
+      <Modal isOpen={isModalOpen} onClose={cerrarModal}>
         <h2>Modal</h2>
         <p>Contenido del modal</p>
       </Modal>
@@ -50,5 +59,5 @@ export default function ComponentesDemoPage() {
         ]}
       />
     </div>
-  )
+  );
 }

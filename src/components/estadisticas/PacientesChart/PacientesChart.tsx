@@ -6,29 +6,36 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts'
+} from 'recharts';
 
-import type { EstadisticaPacientes } from '@/types/reporte'
+import type { EstadisticaPacientes } from '@/types/reporte';
 
-import './PacientesChart.css'
+import './PacientesChart.css';
 
+/**
+ * Propiedades para el componente de gráfico de pacientes.
+ */
 type PacientesChartProps = {
-  data: EstadisticaPacientes[]
-}
+  /** Arreglo con los datos estadísticos temporales del flujo de pacientes. */
+  data: EstadisticaPacientes[];
+};
 
-export default function PacientesChart({
-  data,
-}: PacientesChartProps) {
-
+/**
+ * Componente visual encargado de renderizar un gráfico de líneas
+ * para mostrar la evolución temporal del flujo de pacientes.
+ *
+ * @param props Contiene el arreglo de datos estadísticos para graficar.
+ * @returns Una sección HTML estructurada con el gráfico responsivo o un mensaje de ausencia de datos.
+ */
+export default function PacientesChart({ data }: PacientesChartProps) {
   // Evita enviar datos inválidos a Recharts
-  const datosSeguros = Array.isArray(data) ? data : []
+  const datosSeguros = Array.isArray(data) ? data : [];
 
   return (
     <section className="pacientes-chart">
       <h2>Flujo de pacientes</h2>
 
       <div className="pacientes-chart__container">
-
         {datosSeguros.length === 0 ? (
           <p>No hay estadísticas disponibles.</p>
         ) : (
@@ -51,8 +58,7 @@ export default function PacientesChart({
             </LineChart>
           </ResponsiveContainer>
         )}
-
       </div>
     </section>
-  )
+  );
 }

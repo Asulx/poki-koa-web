@@ -1,3 +1,9 @@
+/**
+ * @file tokens.css
+ * @description Definición de variables CSS globales (:root) que integran los tokens originales del sistema
+ * y la paleta de diseño para mantener la consistencia visual, tipográfica y de espaciados en la aplicación.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
 
 :root {

@@ -1,7 +1,19 @@
+/**
+ * Propiedades para el componente Header de la interfaz.
+ */
 interface HeaderProps {
-  onMenuClick?: () => void
+  /** Función opcional que se ejecuta al hacer clic en el botón para alternar el menú lateral. */
+  onMenuClick?: () => void;
 }
 
+/**
+ * Componente de cabecera principal de la aplicación.
+ * Muestra el botón de navegación para dispositivos móviles o colapsables, el título de la sección
+ * y la información del usuario autenticado.
+ *
+ * @param props Contiene el manejador de eventos `onMenuClick`.
+ * @returns Un elemento `<header>` estructurado con la barra de navegación superior.
+ */
 export default function Header({ onMenuClick }: HeaderProps) {
   return (
     <header className="header">
@@ -12,16 +24,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
           onClick={onMenuClick}
           aria-label="Abrir menú"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
             <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>
         </button>
         <h1>Panel de Administración</h1>
       </div>
 
-      <div className="header-user">
-        Usuario
-      </div>
+      <div className="header-user">Usuario</div>
     </header>
-  )
+  );
 }

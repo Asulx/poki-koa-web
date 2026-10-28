@@ -1,22 +1,35 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   pacienteSchema,
   type PacienteFormData,
-} from '@/forms/schemas/pacienteSchema'
+} from '@/forms/schemas/pacienteSchema';
 
+/**
+ * Propiedades requeridas y opcionales para el componente PacienteForm.
+ */
 type PacienteFormProps = {
-  defaultValues?: Partial<PacienteFormData>
-  onSubmit: (data: PacienteFormData) => Promise<void>
-}
+  /** Valores iniciales opcionales para rellenar el formulario (empleado en modos de edición). */
+  defaultValues?: Partial<PacienteFormData>;
+  /** Función asíncrona que se ejecuta al enviar exitosamente el formulario validado. */
+  onSubmit: (data: PacienteFormData) => Promise<void>;
+};
 
+/**
+ * Componente de formulario integral para el registro y actualización de datos de pacientes.
+ * Emplea React Hook Form y esquemas Zod para la validación tipada en tiempo real,
+ * gestionando de forma segura los estados de carga y envío asíncrono.
+ *
+ * @param props Contiene los valores iniciales opcionales y la función manejadora de envío.
+ * @returns Un elemento `<form>` estructurado con todos los campos clínicos y demográficos del paciente.
+ */
 export default function PacienteForm({
   defaultValues,
   onSubmit,
 }: PacienteFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -26,19 +39,17 @@ export default function PacienteForm({
     resolver: zodResolver(pacienteSchema),
     mode: 'onChange',
     defaultValues,
-  })
+  });
 
-  const handleFormSubmit = async (
-    data: PacienteFormData
-  ) => {
+  const handleFormSubmit = async (data: PacienteFormData) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      await onSubmit(data)
+      await onSubmit(data);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -49,56 +60,37 @@ export default function PacienteForm({
 
         <input {...register('nombre')} />
 
-        {errors.nombre && (
-          <p>{errors.nombre.message}</p>
-        )}
+        {errors.nombre && <p>{errors.nombre.message}</p>}
       </div>
 
       <div>
         <label>Fecha de nacimiento</label>
 
-        <input
-          type="date"
-          {...register('fechaNacimiento')}
-        />
+        <input type="date" {...register('fechaNacimiento')} />
 
-        {errors.fechaNacimiento && (
-          <p>{errors.fechaNacimiento.message}</p>
-        )}
+        {errors.fechaNacimiento && <p>{errors.fechaNacimiento.message}</p>}
       </div>
 
       <div>
         <label>Sexo</label>
 
         <select {...register('sexo')}>
-          <option value="">
-            Seleccione
-          </option>
+          <option value="">Seleccione</option>
 
-          <option value="Femenino">
-            Femenino
-          </option>
+          <option value="Femenino">Femenino</option>
 
-          <option value="Masculino">
-            Masculino
-          </option>
+          <option value="Masculino">Masculino</option>
         </select>
 
-        {errors.sexo && (
-          <p>{errors.sexo.message}</p>
-        )}
+        {errors.sexo && <p>{errors.sexo.message}</p>}
       </div>
 
       <div>
         <label>Edad gestacional</label>
 
-        <input
-          {...register('edadGestacional')}
-        />
+        <input {...register('edadGestacional')} />
 
-        {errors.edadGestacional && (
-          <p>{errors.edadGestacional.message}</p>
-        )}
+        {errors.edadGestacional && <p>{errors.edadGestacional.message}</p>}
       </div>
 
       <div>
@@ -112,130 +104,80 @@ export default function PacienteForm({
           })}
         />
 
-        {errors.peso && (
-          <p>{errors.peso.message}</p>
-        )}
+        {errors.peso && <p>{errors.peso.message}</p>}
       </div>
 
       <div>
         <label>Número de cuna</label>
 
-        <input
-          {...register('numeroCuna')}
-        />
+        <input {...register('numeroCuna')} />
 
-        {errors.numeroCuna && (
-          <p>{errors.numeroCuna.message}</p>
-        )}
+        {errors.numeroCuna && <p>{errors.numeroCuna.message}</p>}
       </div>
 
       <div>
         <label>Fecha de ingreso</label>
 
-        <input
-          type="date"
-          {...register('fechaIngreso')}
-        />
+        <input type="date" {...register('fechaIngreso')} />
 
-        {errors.fechaIngreso && (
-          <p>{errors.fechaIngreso.message}</p>
-        )}
+        {errors.fechaIngreso && <p>{errors.fechaIngreso.message}</p>}
       </div>
 
       <div>
         <label>Médico responsable</label>
 
-        <input
-          {...register('medicoResponsable')}
-        />
+        <input {...register('medicoResponsable')} />
 
-        {errors.medicoResponsable && (
-          <p>
-            {errors.medicoResponsable.message}
-          </p>
-        )}
+        {errors.medicoResponsable && <p>{errors.medicoResponsable.message}</p>}
       </div>
 
       <div>
         <label>Diagnóstico principal</label>
 
-        <input
-          {...register('diagnostico')}
-        />
+        <input {...register('diagnostico')} />
 
-        {errors.diagnostico && (
-          <p>{errors.diagnostico.message}</p>
-        )}
+        {errors.diagnostico && <p>{errors.diagnostico.message}</p>}
       </div>
 
       <div>
         <label>Estado de cánula</label>
 
-        <select
-          {...register('estadoCanula')}
-        >
-          <option value="">
-            Seleccione
-          </option>
+        <select {...register('estadoCanula')}>
+          <option value="">Seleccione</option>
 
-          <option value="OK">
-            OK
-          </option>
+          <option value="OK">OK</option>
 
-          <option value="Pendiente">
-            Pendiente
-          </option>
+          <option value="Pendiente">Pendiente</option>
         </select>
 
-        {errors.estadoCanula && (
-          <p>{errors.estadoCanula.message}</p>
-        )}
+        {errors.estadoCanula && <p>{errors.estadoCanula.message}</p>}
       </div>
 
       <div>
         <label>Vía intravenosa</label>
 
-        <select
-          {...register('viaIntravenosa')}
-        >
-          <option value="">
-            Seleccione
-          </option>
+        <select {...register('viaIntravenosa')}>
+          <option value="">Seleccione</option>
 
-          <option value="Activa">
-            Activa
-          </option>
+          <option value="Activa">Activa</option>
 
-          <option value="Inactiva">
-            Inactiva
-          </option>
+          <option value="Inactiva">Inactiva</option>
         </select>
 
-        {errors.viaIntravenosa && (
-          <p>{errors.viaIntravenosa.message}</p>
-        )}
+        {errors.viaIntravenosa && <p>{errors.viaIntravenosa.message}</p>}
       </div>
 
       <div>
         <label>Observaciones</label>
 
-        <textarea
-          {...register('observaciones')}
-        />
+        <textarea {...register('observaciones')} />
 
-        {errors.observaciones && (
-          <p>{errors.observaciones.message}</p>
-        )}
+        {errors.observaciones && <p>{errors.observaciones.message}</p>}
       </div>
 
-      <button
-        type="submit"
-        disabled={!isValid || isLoading}
-      >
-        {isLoading
-          ? 'Guardando...'
-          : 'Guardar Paciente'}
+      <button type="submit" disabled={!isValid || isLoading}>
+        {isLoading ? 'Guardando...' : 'Guardar Paciente'}
       </button>
     </form>
-  )
+  );
 }

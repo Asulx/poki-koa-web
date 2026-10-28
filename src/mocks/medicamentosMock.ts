@@ -1,5 +1,9 @@
-import type { Medicamento } from '@/types/medicamento'
+import type { Medicamento } from '@/types/medicamento';
 
+/**
+ * Arreglo de datos simulados (*mock data*) que representa un catálogo inicial
+ * de medicamentos disponibles para el sistema de gestión farmacéutica.
+ */
 export const medicamentosMock: Medicamento[] = [
   {
     id: 1,
@@ -22,4 +26,4 @@ export const medicamentosMock: Medicamento[] = [
     dosis: '250 mg',
     stock: 45,
   },
-]
+];

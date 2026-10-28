@@ -1,6 +1,13 @@
 import React from 'react';
 import './PacienteDetalle.css';
 
+/**
+ * Componente de vista detallada del paciente en la unidad de neonatología.
+ * Muestra la información demográfica/clínica general del recién nacido, el estado actual de su cuna
+ * y un panel de monitorización de signos vitales en tiempo real (ritmo cardíaco, saturación y temperatura).
+ *
+ * @returns Un elemento JSX con la vista y diseño estructurado del expediente y monitoreo del paciente.
+ */
 export default function PacienteDetalle() {
   return (
     <div className="paciente-detalle-container">
@@ -36,7 +43,7 @@ export default function PacienteDetalle() {
       </section>
 
       <h2 className="section-title">Monitor de Signos Vitales</h2>
-      
+
       <section className="vital-signs-grid">
         {/* Tarjeta Frecuencia Cardíaca */}
         <div className="vital-card hr-card">
