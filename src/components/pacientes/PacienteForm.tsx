@@ -1,17 +1,30 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   pacienteSchema,
   type PacienteFormData,
-} from "@/forms/schemas/pacienteSchema";
+} from '@/forms/schemas/pacienteSchema';
 
+/**
+ * Propiedades requeridas y opcionales para el componente PacienteForm.
+ */
 type PacienteFormProps = {
+  /** Valores iniciales opcionales para rellenar el formulario (empleado en modos de edición). */
   defaultValues?: Partial<PacienteFormData>;
+  /** Función asíncrona que se ejecuta al enviar exitosamente el formulario validado. */
   onSubmit: (data: PacienteFormData) => Promise<void>;
 };
 
+/**
+ * Componente de formulario integral para el registro y actualización de datos de pacientes.
+ * Emplea React Hook Form y esquemas Zod para la validación tipada en tiempo real,
+ * gestionando de forma segura los estados de carga y envío asíncrono.
+ * 
+ * @param props Contiene los valores iniciales opcionales y la función manejadora de envío.
+ * @returns Un elemento `<form>` estructurado con todos los campos clínicos y demográficos del paciente.
+ */
 export default function PacienteForm({
   defaultValues,
   onSubmit,
@@ -24,7 +37,7 @@ export default function PacienteForm({
     formState: { errors, isValid },
   } = useForm<PacienteFormData>({
     resolver: zodResolver(pacienteSchema),
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues,
   });
 
@@ -45,7 +58,7 @@ export default function PacienteForm({
       <div>
         <label>Nombre completo</label>
 
-        <input {...register("nombre")} />
+        <input {...register('nombre')} />
 
         {errors.nombre && <p>{errors.nombre.message}</p>}
       </div>
@@ -53,7 +66,7 @@ export default function PacienteForm({
       <div>
         <label>Fecha de nacimiento</label>
 
-        <input type="date" {...register("fechaNacimiento")} />
+        <input type="date" {...register('fechaNacimiento')} />
 
         {errors.fechaNacimiento && <p>{errors.fechaNacimiento.message}</p>}
       </div>
@@ -61,7 +74,7 @@ export default function PacienteForm({
       <div>
         <label>Sexo</label>
 
-        <select {...register("sexo")}>
+        <select {...register('sexo')}>
           <option value="">Seleccione</option>
 
           <option value="Femenino">Femenino</option>
@@ -75,7 +88,7 @@ export default function PacienteForm({
       <div>
         <label>Edad gestacional</label>
 
-        <input {...register("edadGestacional")} />
+        <input {...register('edadGestacional')} />
 
         {errors.edadGestacional && <p>{errors.edadGestacional.message}</p>}
       </div>
@@ -86,7 +99,7 @@ export default function PacienteForm({
         <input
           type="number"
           step="0.1"
-          {...register("peso", {
+          {...register('peso', {
             valueAsNumber: true,
           })}
         />
@@ -97,7 +110,7 @@ export default function PacienteForm({
       <div>
         <label>Número de cuna</label>
 
-        <input {...register("numeroCuna")} />
+        <input {...register('numeroCuna')} />
 
         {errors.numeroCuna && <p>{errors.numeroCuna.message}</p>}
       </div>
@@ -105,7 +118,7 @@ export default function PacienteForm({
       <div>
         <label>Fecha de ingreso</label>
 
-        <input type="date" {...register("fechaIngreso")} />
+        <input type="date" {...register('fechaIngreso')} />
 
         {errors.fechaIngreso && <p>{errors.fechaIngreso.message}</p>}
       </div>
@@ -113,7 +126,7 @@ export default function PacienteForm({
       <div>
         <label>Médico responsable</label>
 
-        <input {...register("medicoResponsable")} />
+        <input {...register('medicoResponsable')} />
 
         {errors.medicoResponsable && <p>{errors.medicoResponsable.message}</p>}
       </div>
@@ -121,7 +134,7 @@ export default function PacienteForm({
       <div>
         <label>Diagnóstico principal</label>
 
-        <input {...register("diagnostico")} />
+        <input {...register('diagnostico')} />
 
         {errors.diagnostico && <p>{errors.diagnostico.message}</p>}
       </div>
@@ -129,7 +142,7 @@ export default function PacienteForm({
       <div>
         <label>Estado de cánula</label>
 
-        <select {...register("estadoCanula")}>
+        <select {...register('estadoCanula')}>
           <option value="">Seleccione</option>
 
           <option value="OK">OK</option>
@@ -143,7 +156,7 @@ export default function PacienteForm({
       <div>
         <label>Vía intravenosa</label>
 
-        <select {...register("viaIntravenosa")}>
+        <select {...register('viaIntravenosa')}>
           <option value="">Seleccione</option>
 
           <option value="Activa">Activa</option>
@@ -157,13 +170,13 @@ export default function PacienteForm({
       <div>
         <label>Observaciones</label>
 
-        <textarea {...register("observaciones")} />
+        <textarea {...register('observaciones')} />
 
         {errors.observaciones && <p>{errors.observaciones.message}</p>}
       </div>
 
       <button type="submit" disabled={!isValid || isLoading}>
-        {isLoading ? "Guardando..." : "Guardar Paciente"}
+        {isLoading ? 'Guardando...' : 'Guardar Paciente'}
       </button>
     </form>
   );

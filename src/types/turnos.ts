@@ -1,7 +1,13 @@
+/**
+ * @file asignacion.ts
+ * @description Definición de contratos de tipo para la gestión de turnos,
+ * personal, asignaciones de cunas y monitorización en tiempo real.
+ */
+
 export type Turno = {
   id: number;
   nombre: string;
-  hora_inicio: string; // "08:00:00"
+  hora_inicio: string;
   hora_fin: string;
 };
 
@@ -35,7 +41,6 @@ export type NuevaAsignacion = {
   fecha: string;
 };
 
-// Lo que devuelve /asignaciones/mis-cunas/ (CunaSerializer del backend)
 export type CunaAsignada = {
   id: number;
   identificador: string;

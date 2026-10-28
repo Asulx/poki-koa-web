@@ -1,3 +1,9 @@
+/**
+ * @file reporte.ts
+ * @description Definición de contratos de tipo e interfaces para la gestión de reportes,
+ * métricas generales y estadísticas demográficas o temporales de los pacientes.
+ */
+
 export interface DatosReporte {
   totalAlertas: number;
   medicamentosAdministrados: number;

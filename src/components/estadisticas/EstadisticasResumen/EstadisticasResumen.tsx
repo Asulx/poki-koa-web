@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import EstadisticaCard from "@/components/estadisticas/EstadisticaCard/EstadisticaCard";
-import PacientesChart from "@/components/estadisticas/PacientesChart/PacientesChart";
+import EstadisticaCard from '@/components/estadisticas/EstadisticaCard/EstadisticaCard';
+import PacientesChart from '@/components/estadisticas/PacientesChart/PacientesChart';
 
-import type { EstadisticaPacientes, MetricasGenerales } from "@/types/reporte";
+import type { EstadisticaPacientes, MetricasGenerales } from '@/types/reporte';
 
-import "./EstadisticasResumen.css";
+import './EstadisticasResumen.css';
 
+/**
+ * Componente contenedor encargado de gestionar, cargar y visualizar
+ * el resumen general de estadísticas y métricas del sistema médico (pacientes y medicamentos).
+ * 
+ * @returns El panel completo de estadísticas con sus tarjetas de resumen y gráficos analíticos.
+ */
 export default function EstadisticasResumen() {
   const [metricas, setMetricas] = useState<MetricasGenerales | null>(null);
 
@@ -44,17 +50,17 @@ export default function EstadisticasResumen() {
         } as MetricasGenerales;
 
         const pacientesResponse = [
-          { mes: "Ene", cantidad: 10 },
-          { mes: "Feb", cantidad: 15 },
-          { mes: "Mar", cantidad: 20 },
-          { mes: "Abr", cantidad: 18 },
+          { mes: 'Ene', cantidad: 10 },
+          { mes: 'Feb', cantidad: 15 },
+          { mes: 'Mar', cantidad: 20 },
+          { mes: 'Abr', cantidad: 18 },
         ] as unknown as EstadisticaPacientes[];
 
         setMetricas(metricasResponse);
         setEstadisticasPacientes(pacientesResponse);
       } catch (error) {
-        console.error("Error al cargar estadísticas:", error);
-        setError("No fue posible cargar las estadísticas.");
+        console.error('Error al cargar estadísticas:', error);
+        setError('No fue posible cargar las estadísticas.');
       } finally {
         setIsLoading(false);
       }

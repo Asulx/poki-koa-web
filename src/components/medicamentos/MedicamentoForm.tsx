@@ -1,16 +1,28 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   medicamentoSchema,
   type MedicamentoFormData,
-} from "@/forms/schemas/medicamentoSchema";
+} from '@/forms/schemas/medicamentoSchema';
 
+/**
+ * Propiedades para el componente MedicamentoForm.
+ */
 type MedicamentoFormProps = {
+  /** Valores iniciales opcionales para rellenar el formulario (útil en modo edición). */
   defaultValues?: Partial<MedicamentoFormData>;
 };
 
+/**
+ * Componente de formulario para la creación y edición de medicamentos.
+ * Utiliza React Hook Form y Zod para la validación de campos, gestionando
+ * de manera reactiva los estados de error, carga y habilitación del botón de envío.
+ * 
+ * @param props Contiene los valores iniciales opcionales (`defaultValues`).
+ * @returns Un elemento `<form>` estructurado con campos validados para la gestión de medicamentos.
+ */
 export default function MedicamentoForm({
   defaultValues,
 }: MedicamentoFormProps) {
@@ -22,7 +34,7 @@ export default function MedicamentoForm({
     formState: { errors, isValid },
   } = useForm<MedicamentoFormData>({
     resolver: zodResolver(medicamentoSchema) as any,
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues,
   });
 
@@ -33,7 +45,7 @@ export default function MedicamentoForm({
 
     console.log(data);
 
-    alert("Medicamento guardado correctamente");
+    alert('Medicamento guardado correctamente');
 
     setIsLoading(false);
   };
@@ -43,7 +55,7 @@ export default function MedicamentoForm({
       <div>
         <label>Nombre</label>
 
-        <input {...register("nombre")} placeholder="Paracetamol" />
+        <input {...register('nombre')} placeholder="Paracetamol" />
 
         {errors.nombre && <p>{errors.nombre.message}</p>}
       </div>
@@ -51,7 +63,7 @@ export default function MedicamentoForm({
       <div>
         <label>Principio activo</label>
 
-        <input {...register("principioActivo")} placeholder="Paracetamol" />
+        <input {...register('principioActivo')} placeholder="Paracetamol" />
 
         {errors.principioActivo && <p>{errors.principioActivo.message}</p>}
       </div>
@@ -61,7 +73,7 @@ export default function MedicamentoForm({
 
         <input
           type="number"
-          {...register("dosis", {
+          {...register('dosis', {
             valueAsNumber: true,
           })}
         />
@@ -74,7 +86,7 @@ export default function MedicamentoForm({
 
         <input
           type="number"
-          {...register("stock", {
+          {...register('stock', {
             valueAsNumber: true,
           })}
         />
@@ -83,7 +95,7 @@ export default function MedicamentoForm({
       </div>
 
       <button type="submit" disabled={!isValid || isLoading}>
-        {isLoading ? "Guardando..." : "Guardar medicamento"}
+        {isLoading ? 'Guardando...' : 'Guardar medicamento'}
       </button>
     </form>
   );

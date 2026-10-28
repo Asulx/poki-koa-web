@@ -1,15 +1,22 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import PacientesFiltros from "@/components/pacientes/PacientesFiltros/PacientesFiltros";
-import Button from "@/components/ui/Button/Button";
-import Table, { type TableColumn } from "@/components/ui/Table/Table";
+import PacientesFiltros from '@/components/pacientes/PacientesFiltros/PacientesFiltros';
+import Button from '@/components/ui/Button/Button';
+import Table, { type TableColumn } from '@/components/ui/Table/Table';
 
-import { pacientesService } from "@/services/pacientesService";
-import type { Paciente } from "@/types/paciente";
+import { pacientesService } from '@/services/pacientesService';
+import type { Paciente } from '@/types/paciente';
 
+/** Número máximo de elementos por página en el listado de pacientes. */
 const ITEMS_PER_PAGE = 5;
 
+/**
+ * Componente de página para la gestión, filtrado, paginación y visualización del listado de pacientes.
+ * Conecta con el servicio de pacientes, gestiona estados de carga/error y facilita la navegación hacia registros o ediciones.
+ * 
+ * @returns Un elemento JSX con la vista completa del catálogo y filtros de pacientes.
+ */
 export default function PacientesPage() {
   const navigate = useNavigate();
 
@@ -18,10 +25,10 @@ export default function PacientesPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [busqueda, setBusqueda] = useState("");
-  const [sexo, setSexo] = useState("");
-  const [fechaIngreso, setFechaIngreso] = useState("");
-  const [estadoCanula, setEstadoCanula] = useState("");
+  const [busqueda, setBusqueda] = useState('');
+  const [sexo, setSexo] = useState('');
+  const [fechaIngreso, setFechaIngreso] = useState('');
+  const [estadoCanula, setEstadoCanula] = useState('');
 
   useEffect(() => {
     async function cargarPacientes() {
@@ -33,9 +40,9 @@ export default function PacientesPage() {
 
         setPacientes(data);
       } catch (error) {
-        console.error("Error al cargar pacientes:", error);
+        console.error('Error al cargar pacientes:', error);
 
-        setError("No fue posible cargar los pacientes.");
+        setError('No fue posible cargar los pacientes.');
       } finally {
         setIsLoading(false);
       }
@@ -48,17 +55,17 @@ export default function PacientesPage() {
     const textoBusqueda = busqueda.trim().toLowerCase();
 
     const coincideBusqueda =
-      textoBusqueda === "" ||
+      textoBusqueda === '' ||
       paciente.nombre.toLowerCase().includes(textoBusqueda) ||
       String(paciente.id).includes(textoBusqueda);
 
-    const coincideSexo = sexo === "" || paciente.sexo === sexo;
+    const coincideSexo = sexo === '' || paciente.sexo === sexo;
 
     const coincideFechaIngreso =
-      fechaIngreso === "" || paciente.fechaIngreso === fechaIngreso;
+      fechaIngreso === '' || paciente.fechaIngreso === fechaIngreso;
 
     const coincideEstadoCanula =
-      estadoCanula === "" || paciente.estadoCanula === estadoCanula;
+      estadoCanula === '' || paciente.estadoCanula === estadoCanula;
 
     return (
       coincideBusqueda &&
@@ -70,14 +77,14 @@ export default function PacientesPage() {
 
   const totalPages = Math.max(
     1,
-    Math.ceil(pacientesFiltrados.length / ITEMS_PER_PAGE),
+    Math.ceil(pacientesFiltrados.length / ITEMS_PER_PAGE)
   );
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const pacientesPaginados = pacientesFiltrados.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE,
+    startIndex + ITEMS_PER_PAGE
   );
 
   function actualizarBusqueda(value: string) {
@@ -101,37 +108,37 @@ export default function PacientesPage() {
   }
 
   function limpiarFiltros() {
-    setBusqueda("");
-    setSexo("");
-    setFechaIngreso("");
-    setEstadoCanula("");
+    setBusqueda('');
+    setSexo('');
+    setFechaIngreso('');
+    setEstadoCanula('');
     setCurrentPage(1);
   }
 
   const columns: TableColumn<Paciente>[] = [
     {
-      key: "nombre",
-      label: "Nombre",
+      key: 'nombre',
+      label: 'Nombre',
     },
     {
-      key: "fechaNacimiento",
-      label: "Fecha de nacimiento",
+      key: 'fechaNacimiento',
+      label: 'Fecha de nacimiento',
     },
     {
-      key: "numeroCuna",
-      label: "Cuna",
+      key: 'numeroCuna',
+      label: 'Cuna',
     },
     {
-      key: "medicoResponsable",
-      label: "Médico responsable",
+      key: 'medicoResponsable',
+      label: 'Médico responsable',
     },
     {
-      key: "diagnostico",
-      label: "Diagnóstico",
+      key: 'diagnostico',
+      label: 'Diagnóstico',
     },
     {
-      key: "acciones",
-      label: "Acciones",
+      key: 'acciones',
+      label: 'Acciones',
       render: (paciente) => (
         <Button onClick={() => navigate(`/pacientes/editar/${paciente.id}`)}>
           Editar
@@ -163,7 +170,7 @@ export default function PacientesPage() {
       <div>
         <h1>Pacientes</h1>
 
-        <Button onClick={() => navigate("/pacientes/nuevo")}>
+        <Button onClick={() => navigate('/pacientes/nuevo')}>
           Registrar paciente
         </Button>
       </div>
@@ -207,8 +214,8 @@ export default function PacientesPage() {
             </Button>
 
             <span>
-              {" "}
-              Página {currentPage} de {totalPages}{" "}
+              {' '}
+              Página {currentPage} de {totalPages}{' '}
             </span>
 
             <Button

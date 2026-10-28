@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import PacienteForm from "@/components/pacientes/PacienteForm";
-import { pacientesService } from "@/services/pacientesService";
+import PacienteForm from '@/components/pacientes/PacienteForm';
+import { pacientesService } from '@/services/pacientesService';
 
-import type { Paciente } from "@/types/paciente";
-import type { PacienteFormData } from "@/forms/schemas/pacienteSchema";
+import type { Paciente } from '@/types/paciente';
+import type { PacienteFormData } from '@/forms/schemas/pacienteSchema';
 
+/**
+ * Componente de página para la edición de la información de un paciente existente.
+ * Gestiona la recuperación asíncrona de datos basada en el ID de la ruta, validaciones defensivas,
+ * estados de carga, manejo de errores y envío de cambios hacia el servicio de pacientes.
+ * 
+ * @returns Un elemento JSX con la vista y lógica correspondiente a la edición del paciente.
+ */
 export default function PacienteEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,7 +27,7 @@ export default function PacienteEditPage() {
   useEffect(() => {
     async function cargarPaciente() {
       if (!id) {
-        setError("No se encontró el identificador del paciente.");
+        setError('No se encontró el identificador del paciente.');
         setIsLoading(false);
         return;
       }
@@ -28,7 +35,7 @@ export default function PacienteEditPage() {
       const pacienteId = Number(id);
 
       if (Number.isNaN(pacienteId)) {
-        setError("El identificador del paciente no es válido.");
+        setError('El identificador del paciente no es válido.');
         setIsLoading(false);
         return;
       }
@@ -41,9 +48,9 @@ export default function PacienteEditPage() {
 
         setPaciente(data);
       } catch (error) {
-        console.error("Error al cargar el paciente:", error);
+        console.error('Error al cargar el paciente:', error);
 
-        setError("No fue posible cargar la información del paciente.");
+        setError('No fue posible cargar la información del paciente.');
       } finally {
         setIsLoading(false);
       }
@@ -66,13 +73,13 @@ export default function PacienteEditPage() {
     try {
       await pacientesService.actualizar(pacienteId, data);
 
-      alert("Paciente actualizado correctamente");
+      alert('Paciente actualizado correctamente');
 
-      navigate("/pacientes");
+      navigate('/pacientes');
     } catch (error) {
-      console.error("Error al actualizar paciente:", error);
+      console.error('Error al actualizar paciente:', error);
 
-      alert("No fue posible actualizar el paciente.");
+      alert('No fue posible actualizar el paciente.');
     }
   };
 

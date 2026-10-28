@@ -1,7 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+/**
+ * @file typography.css
+ * @description Estilos base de tipografía y carga de la fuente corporativa DM Sans
+ * para mantener la consistencia visual en las interfaces de la unidad neonatal.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ================================================================
+   Estilos Tipográficos Globales
+   ================================================================ */
 
 body {
-  font-family: "DM Sans", sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 h1 {

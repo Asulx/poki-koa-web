@@ -1,67 +1,74 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import Button from "@/components/ui/Button/Button";
-import Table, { type TableColumn } from "@/components/ui/Table/Table";
-import { getMedicamentos } from "@/services/medicamentosService";
-import type { Medicamento } from "@/types/medicamento";
+import Button from '@/components/ui/Button/Button';
+import Table, { type TableColumn } from '@/components/ui/Table/Table';
+import { getMedicamentos } from '@/services/medicamentosService';
+import type { Medicamento } from '@/types/medicamento';
 
-import "./MedicamentosPage.css";
+import './MedicamentosPage.css';
 
+/** Número máximo de elementos por página en la tabla de medicamentos. */
 const PAGE_SIZE = 5;
 
-// 1. Creamos una lista simulada (Mock data)
+/** Lista simulada (mock data) de respaldo para el desarrollo e interfaz de medicamentos. */
 const mockMedicamentos = [
   {
-    id: "1",
-    nombre: "Paracetamol",
-    principioActivo: "Paracetamol",
-    dosis: "500mg",
+    id: '1',
+    nombre: 'Paracetamol',
+    principioActivo: 'Paracetamol',
+    dosis: '500mg',
     stock: 120,
   },
   {
-    id: "2",
-    nombre: "Ibuprofeno",
-    principioActivo: "Ibuprofeno",
-    dosis: "400mg",
+    id: '2',
+    nombre: 'Ibuprofeno',
+    principioActivo: 'Ibuprofeno',
+    dosis: '400mg',
     stock: 50,
   },
   {
-    id: "3",
-    nombre: "Amoxicilina",
-    principioActivo: "Amoxicilina",
-    dosis: "250mg",
+    id: '3',
+    nombre: 'Amoxicilina',
+    principioActivo: 'Amoxicilina',
+    dosis: '250mg',
     stock: 15,
   },
   {
-    id: "4",
-    nombre: "Loratadina",
-    principioActivo: "Loratadina",
-    dosis: "10mg",
+    id: '4',
+    nombre: 'Loratadina',
+    principioActivo: 'Loratadina',
+    dosis: '10mg',
     stock: 200,
   },
   {
-    id: "5",
-    nombre: "Omeprazol",
-    principioActivo: "Omeprazol",
-    dosis: "20mg",
+    id: '5',
+    nombre: 'Omeprazol',
+    principioActivo: 'Omeprazol',
+    dosis: '20mg',
     stock: 80,
   },
   {
-    id: "6",
-    nombre: "Diclofenaco",
-    principioActivo: "Diclofenaco",
-    dosis: "50mg",
+    id: '6',
+    nombre: 'Diclofenaco',
+    principioActivo: 'Diclofenaco',
+    dosis: '50mg',
     stock: 10,
   },
 ] as unknown as Medicamento[];
 
+/**
+ * Componente de página para el listado, paginación y gestión general de medicamentos.
+ * Permite visualizar el inventario farmacéutico en formato tabular con opciones de navegación y edición.
+ * 
+ * @returns Un elemento JSX con la vista completa del catálogo de medicamentos.
+ */
 export default function MedicamentosPage() {
   const navigate = useNavigate();
 
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -88,17 +95,17 @@ export default function MedicamentosPage() {
 
   const visibleMedicamentos = medicamentos.slice(
     (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
+    page * PAGE_SIZE
   );
 
   const columns: TableColumn<Medicamento>[] = [
-    { key: "nombre", label: "Nombre" },
-    { key: "principioActivo", label: "Principio activo" },
-    { key: "dosis", label: "Dosis" },
-    { key: "stock", label: "Stock" },
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'principioActivo', label: 'Principio activo' },
+    { key: 'dosis', label: 'Dosis' },
+    { key: 'stock', label: 'Stock' },
     {
-      key: "acciones",
-      label: "Acciones",
+      key: 'acciones',
+      label: 'Acciones',
       render: (medicamento) => (
         <Button
           variant="secondary"

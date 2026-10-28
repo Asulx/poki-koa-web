@@ -1,11 +1,26 @@
-/* Mobile */
+/* ================================================================
+   Estructura Responsiva Base (BEM)
+   ================================================================ */
+
+/* Estilos base por defecto (Mobile First) */
+
+/* ----------------------------------------------------------------
+   1. Dispositivos Móviles (Hasta 768px)
+   ---------------------------------------------------------------- */
 @media (max-width: 768px) {
+  /* Ajustes de tipografía, contenedores a 100% y apilamiento de elementos */
 }
 
-/* Tablet */
+/* ----------------------------------------------------------------
+   2. Tablets y Pantallas Medianas (769px - 1024px)
+   ---------------------------------------------------------------- */
 @media (min-width: 769px) and (max-width: 1024px) {
+  /* Ajustes de grillas a 2 columnas y espaciados intermedios */
 }
 
-/* Desktop */
+/* ----------------------------------------------------------------
+   3. Escritorio y Pantallas Grandes (Desde 1025px)
+   ---------------------------------------------------------------- */
 @media (min-width: 1025px) {
+  /* Contenedores max-width fijos, grillas completas de 3+ columnas */
 }

@@ -1,3 +1,9 @@
+/**
+ * @file apoderado.ts
+ * @description Definición de contratos de tipo para la vista del apoderado en el portal,
+ * incluyendo datos del paciente, permisos de visualización y registros clínicos autorizados.
+ */
+
 export type HijoPortal = {
   paciente_id: number;
   nombre: string;
@@ -7,7 +13,6 @@ export type HijoPortal = {
   fecha_ingreso: string;
   peso: number | null;
   cuna: string | null;
-  // null = el equipo médico no autorizó esta sección
   diagnostico: string | null;
   signos_vitales: {
     ritmo_cardiaco: number | null;

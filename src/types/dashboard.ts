@@ -1,5 +1,11 @@
+/**
+ * @file supervisor.ts
+ * @description Definición de contratos de tipo para las alertas del sistema,
+ * alertas clínicas y el resumen general del supervisor en la unidad neonatal.
+ */
+
 export type AlertaSistema = {
-  nivel: "Advertencia" | "Critica";
+  nivel: 'Advertencia' | 'Critica';
   mensaje: string;
 };
 

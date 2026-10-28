@@ -1,3 +1,9 @@
+/**
+ * @file paciente.ts
+ * @description Definición de contratos de tipo e interfaces para la gestión de pacientes
+ * y sus registros clínicos dentro de la unidad neonatal.
+ */
+
 export interface Paciente {
   id: number;
   nombre: string;

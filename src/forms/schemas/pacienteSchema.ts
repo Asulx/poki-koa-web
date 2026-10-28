@@ -1,29 +1,50 @@
-import { z } from "zod";
+import { z } from 'zod';
 
+/**
+ * Esquema de validación Zod para el formulario de registro y edición de pacientes.
+ * Define las reglas de validación estricta y los mensajes de error requeridos
+ * para cada uno de los campos clínicos y administrativos del paciente.
+ */
 export const pacienteSchema = z.object({
-  nombre: z.string().min(1, "Nombre obligatorio"),
+  /** Nombre completo obligatorio del paciente. */
+  nombre: z.string().min(1, 'Nombre obligatorio'),
 
-  fechaNacimiento: z.string().min(1, "Fecha de nacimiento obligatoria"),
+  /** Fecha de nacimiento del paciente en formato de cadena. */
+  fechaNacimiento: z.string().min(1, 'Fecha de nacimiento obligatoria'),
 
-  sexo: z.string().min(1, "Seleccione sexo"),
+  /** Sexo biológico o género registrado del paciente. */
+  sexo: z.string().min(1, 'Seleccione sexo'),
 
-  edadGestacional: z.string().min(1, "Edad gestacional obligatoria"),
+  /** Edad gestacional del paciente al nacer o evaluación actual. */
+  edadGestacional: z.string().min(1, 'Edad gestacional obligatoria'),
 
-  peso: z.number().min(0.1, "Peso debe ser mayor a 0"),
+  /** Peso actual del paciente en kilogramos (debe ser mayor a 0). */
+  peso: z.number().min(0.1, 'Peso debe ser mayor a 0'),
 
-  numeroCuna: z.string().min(1, "Número de cuna obligatorio"),
+  /** Identificador o número de cuna asignada en el área clínica. */
+  numeroCuna: z.string().min(1, 'Número de cuna obligatorio'),
 
-  fechaIngreso: z.string().min(1, "Fecha de ingreso obligatoria"),
+  /** Fecha de ingreso del paciente a la unidad o centro médico. */
+  fechaIngreso: z.string().min(1, 'Fecha de ingreso obligatoria'),
 
-  medicoResponsable: z.string().min(1, "Médico obligatorio"),
+  /** Nombre del médico especialista o responsable a cargo del paciente. */
+  medicoResponsable: z.string().min(1, 'Médico obligatorio'),
 
-  diagnostico: z.string().min(1, "Diagnóstico obligatorio"),
+  /** Diagnóstico clínico principal del paciente. */
+  diagnostico: z.string().min(1, 'Diagnóstico obligatorio'),
 
+  /** Estado actual o tipo de soporte de cánula respiratoria. */
   estadoCanula: z.string(),
 
+  /** Descripción o estado de la vía intravenosa activa. */
   viaIntravenosa: z.string(),
 
+  /** Notas, observaciones clínicas o comentarios adicionales opcionales. */
   observaciones: z.string().optional(),
 });
 
+/**
+ * Tipo TypeScript inferido automáticamente a partir del esquema `pacienteSchema`.
+ * Utilizado para tipar fuertemente los formularios y datos de pacientes en la aplicación.
+ */
 export type PacienteFormData = z.infer<typeof pacienteSchema>;

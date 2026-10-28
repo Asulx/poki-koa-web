@@ -1,24 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
+/**
+ * Componente de página de error 404 (No encontrada).
+ * Se muestra cuando el usuario intenta acceder a una ruta inexistente dentro del sistema Poki Koa,
+ * ofreciendo un enlace directo de retorno a la página principal.
+ * 
+ * @returns Un elemento JSX con la vista de error de ruta no encontrada.
+ */
 export const NotFoundPage: React.FC = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "60vh",
-        textAlign: "center",
-        padding: "2rem",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '60vh',
+        textAlign: 'center',
+        padding: '2rem',
       }}
     >
       <h1
         style={{
-          fontSize: "5rem",
-          color: "var(--accent)",
-          margin: "0 0 1rem 0",
+          fontSize: '5rem',
+          color: 'var(--accent)',
+          margin: '0 0 1rem 0',
         }}
       >
         404
@@ -26,9 +33,9 @@ export const NotFoundPage: React.FC = () => {
       <h2>Página no encontrada</h2>
       <p
         style={{
-          margin: "1rem 0 2rem 0",
-          color: "var(--text)",
-          maxWidth: "400px",
+          margin: '1rem 0 2rem 0',
+          color: 'var(--text)',
+          maxWidth: '400px',
         }}
       >
         La ruta o sección a la que intentas acceder en el sistema Poki Koa no
@@ -37,13 +44,13 @@ export const NotFoundPage: React.FC = () => {
       <Link
         to="/"
         style={{
-          padding: "0.75rem 1.5rem",
-          backgroundColor: "var(--accent)",
-          color: "#ffffff",
-          borderRadius: "6px",
-          textDecoration: "none",
+          padding: '0.75rem 1.5rem',
+          backgroundColor: 'var(--accent)',
+          color: '#ffffff',
+          borderRadius: '6px',
+          textDecoration: 'none',
           fontWeight: 600,
-          display: "inline-block",
+          display: 'inline-block',
         }}
       >
         Volver al Inicio

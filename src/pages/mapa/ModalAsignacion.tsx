@@ -1,21 +1,34 @@
-import { useState } from "react";
-import type { Cuna } from "@/types/cuna";
-import "./ModalAsignacion.css";
+import { useState, type FormEvent } from 'react';
+import type { Cuna } from '@/types/cuna';
+import './ModalAsignacion.css';
 
+/**
+ * Propiedades requeridas para el componente {@link ModalAsignacion}.
+ */
 interface ModalAsignacionProps {
+  /** Objeto de la cuna a la cual se le asignará el paciente. */
   cuna: Cuna;
+  /** Función callback ejecutada al cerrar o cancelar el modal. */
   onClose: () => void;
+  /** Función callback ejecutada al confirmar la asignación, recibiendo el nombre del paciente. */
   onAsignar: (pacienteNombre: string) => void;
 }
 
+/**
+ * Componente de ventana modal para la asignación de pacientes a una cuna específica
+ * dentro de la unidad de neonatología. Gestiona el estado local del formulario de ingreso.
+ * 
+ * @param props - Propiedades del componente {@link ModalAsignacionProps}.
+ * @returns Un elemento JSX con la estructura y lógica de la ventana modal.
+ */
 export default function ModalAsignacion({
   cuna,
   onClose,
   onAsignar,
 }: ModalAsignacionProps) {
-  const [nombrePaciente, setNombrePaciente] = useState("");
+  const [nombrePaciente, setNombrePaciente] = useState('');
 
-  const manejarEnvio = (e: React.FormEvent) => {
+  const manejarEnvio = (e: FormEvent) => {
     e.preventDefault();
     if (nombrePaciente.trim()) {
       onAsignar(nombrePaciente);

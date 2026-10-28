@@ -1,10 +1,16 @@
-export type EstadoCuna = "disponible" | "ocupada" | "mantenimiento";
+/**
+ * @file cuna.ts
+ * @description Definición de contratos de tipo e interfaces para la gestión de cunas
+ * y su estado operativo dentro de la unidad neonatal.
+ */
+
+export type EstadoCuna = 'disponible' | 'ocupada' | 'mantenimiento';
 
 export interface Cuna {
-  id: string; // Formato requerido: Cuna-01[cite: 16]
+  id: string;
   numero: number;
   estado: EstadoCuna;
   pacienteId?: string;
-  pacienteNombre?: string; // Para mostrar en estado ocupado[cite: 16]
-  alertaMedica?: boolean; // Indicador de constante alerta[cite: 16]
+  pacienteNombre?: string;
+  alertaMedica?: boolean;
 }

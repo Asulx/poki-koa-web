@@ -1,19 +1,41 @@
-import Button from "@/components/ui/Button/Button";
+import Button from '@/components/ui/Button/Button';
 
-import "./PacientesFiltros.css";
+import './PacientesFiltros.css';
 
+/**
+ * Propiedades requeridas para el componente PacientesFiltros.
+ * Define los valores actuales de los filtros y las funciones de callback
+ * para actualizar cada campo o restablecer la vista.
+ */
 type PacientesFiltrosProps = {
+  /** Valor actual del campo de búsqueda por nombre o identificador. */
   busqueda: string;
+  /** Valor actual del filtro de sexo del paciente. */
   sexo: string;
+  /** Valor actual del filtro de fecha de ingreso. */
   fechaIngreso: string;
+  /** Valor actual del filtro por estado de cánula. */
   estadoCanula: string;
+  /** Función ejecutada al modificar el texto de búsqueda. */
   onBusquedaChange: (value: string) => void;
+  /** Función ejecutada al cambiar el filtro de sexo. */
   onSexoChange: (value: string) => void;
+  /** Función ejecutada al cambiar la fecha de ingreso. */
   onFechaIngresoChange: (value: string) => void;
+  /** Función ejecutada al cambiar el estado de la cánula. */
   onEstadoCanulaChange: (value: string) => void;
+  /** Función ejecutada para restablecer todos los filtros a su estado inicial. */
   onLimpiar: () => void;
 };
 
+/**
+ * Componente de filtrado avanzado para la lista de pacientes.
+ * Permite buscar por texto libre y filtrar por múltiples criterios clínicos y demográficos,
+ * además de proveer un botón reactivo para limpiar dichos filtros.
+ * 
+ * @param props Contiene los valores de los filtros y las funciones manejadoras de estado.
+ * @returns Una sección HTML estructurada con los controles de búsqueda y filtrado.
+ */
 export default function PacientesFiltros({
   busqueda,
   sexo,
@@ -26,10 +48,10 @@ export default function PacientesFiltros({
   onLimpiar,
 }: PacientesFiltrosProps) {
   const hayFiltrosActivos =
-    busqueda !== "" ||
-    sexo !== "" ||
-    fechaIngreso !== "" ||
-    estadoCanula !== "";
+    busqueda !== '' ||
+    sexo !== '' ||
+    fechaIngreso !== '' ||
+    estadoCanula !== '';
 
   return (
     <section className="pacientes-filtros">

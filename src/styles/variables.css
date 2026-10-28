@@ -1,4 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap");
+/**
+ * @file tokens.css
+ * @description Definición de variables CSS globales (:root) que integran los tokens originales del sistema
+ * y la paleta de diseño para mantener la consistencia visual, tipográfica y de espaciados en la aplicación.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   /* ---- Tokens originales (globals.css los usa; no eliminar) ---- */
@@ -61,6 +67,6 @@
   --sidebar-w: 240px;
 
   /* Tipografía (DM Sans se carga en typography.css) */
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
 }
