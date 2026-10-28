@@ -9,7 +9,7 @@ import { AuthProvider } from '@/context/AuthContext';
 
 /**
  * Componente principal que inicializa el contexto de autenticación y el sistema de rutas.
- * 
+ *
  * @returns Elemento JSX que representa la estructura raíz de la aplicación
  */
 function App() {

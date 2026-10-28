@@ -12,7 +12,7 @@ type LoginRespuesta = Usuario & { token: string };
 
 /**
  * Autentica a un usuario en el sistema enviando sus credenciales al endpoint de login.
- * 
+ *
  * @param username - Nombre de usuario o identificador clínico.
  * @param password - Contraseña de acceso del usuario.
  * @returns Una promesa que resuelve con los datos del usuario y el token de autenticación.

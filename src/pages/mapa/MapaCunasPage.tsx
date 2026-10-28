@@ -7,7 +7,7 @@ import './MapaCunas.css';
 
 /**
  * Genera una estructura inicial de 40 cunas base para el mapa de la unidad.
- * 
+ *
  * @returns Un arreglo de objetos {@link Cuna} con estado inicial disponible.
  */
 const generarCunasBase = (): Cuna[] => {
@@ -26,7 +26,7 @@ const generarCunasBase = (): Cuna[] => {
  * Componente de página del mapa interactivo de cunas de la Unidad de Neonatología.
  * Gestiona la sincronización en tiempo real mediante WebSockets, solicitudes HTTP,
  * filtrado por estado/búsqueda y la interacción con modales de asignación o vistas detalladas.
- * 
+ *
  * @returns Un elemento JSX que representa la interfaz completa del mapa de cunas.
  */
 export default function MapaCunasPage() {

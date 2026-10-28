@@ -21,7 +21,7 @@ export interface ResultadoAlerta {
 /**
  * Evalúa los signos vitales recibidos (parciales o completos) y determina el estado de alerta del paciente.
  * Valida la existencia obligatoria de los parámetros y aplica reglas de umbrales clínicos.
- * 
+ *
  * @param signos - Objeto parcial que contiene los signos vitales actuales a evaluar.
  * @returns Un objeto de tipo {@link ResultadoAlerta} con el diagnóstico, nivel de criticidad y mensajes o errores asociados.
  */

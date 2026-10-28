@@ -60,7 +60,7 @@ const mockMedicamentos = [
 /**
  * Componente de página para el listado, paginación y gestión general de medicamentos.
  * Permite visualizar el inventario farmacéutico en formato tabular con opciones de navegación y edición.
- * 
+ *
  * @returns Un elemento JSX con la vista completa del catálogo de medicamentos.
  */
 export default function MedicamentosPage() {

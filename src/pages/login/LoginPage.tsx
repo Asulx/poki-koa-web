@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
  * Componente de página para el inicio de sesión (*Login*).
  * Gestiona la autenticación del usuario mediante credenciales, el estado de carga,
  * el manejo de errores y la redirección automática al panel principal tras un acceso exitoso.
- * 
+ *
  * @returns Un elemento JSX con el formulario y la lógica de autenticación.
  */
 export default function LoginPage() {

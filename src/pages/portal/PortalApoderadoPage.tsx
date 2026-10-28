@@ -11,7 +11,7 @@ const NO_AUTORIZADO =
 /**
  * Función auxiliar asíncrona para recuperar la información del portal de apoderados.
  * Extraída para mantener el cuerpo principal del componente plano y legible.
- * 
+ *
  * @param setHijos - Función para actualizar el estado con el arreglo de hijos/pacientes.
  * @param setError - Función para actualizar el estado en caso de error.
  * @param setCargando - Función para gestionar el indicador de carga.
@@ -36,7 +36,7 @@ async function cargarDatosPortal(
  * Componente de página del Portal de Apoderados (Solo lectura).
  * Muestra de forma segura y estructurada el estado clínico, signos vitales, medicamentos
  * y detalles generales de los pacientes asociados a la cuenta del apoderado.
- * 
+ *
  * @returns Un elemento JSX con la vista en modo lectura del estado de los infantes.
  */
 export default function PortalApoderadoPage() {

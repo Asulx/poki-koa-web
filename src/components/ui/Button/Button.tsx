@@ -17,7 +17,7 @@ type ButtonProps = {
 /**
  * Componente de botón reutilizable de la interfaz de usuario.
  * Soporta variantes de diseño, estados de deshabilitación y manejo de eventos de clic.
- * 
+ *
  * @param props Contiene la configuración visual, el estado y los hijos del botón.
  * @returns Un elemento `<button>` estilizado según los parámetros definidos.
  */

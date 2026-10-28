@@ -20,7 +20,7 @@ type InputProps = {
  * Componente de campo de entrada de texto reutilizable.
  * Soporta etiquetas opcionales, marcadores de posición, valores controlados,
  * eventos de cambio y visualización de mensajes de error de validación.
- * 
+ *
  * @param props Contiene las propiedades de configuración y eventos del input.
  * @returns Un contenedor `div` que agrupa la etiqueta, el input de texto y el mensaje de error opcional.
  */

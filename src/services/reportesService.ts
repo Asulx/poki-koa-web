@@ -16,7 +16,7 @@ const REPORTES_ENDPOINT = '/reportes';
 
 /**
  * Obtiene el conjunto completo de datos analíticos para la generación de reportes.
- * 
+ *
  * @returns Una promesa que resuelve con los datos de tipo {@link DatosReporte}.
  */
 export async function obtenerDatosReporte(): Promise<DatosReporte> {
@@ -27,7 +27,7 @@ export async function obtenerDatosReporte(): Promise<DatosReporte> {
 
 /**
  * Obtiene las métricas generales y de rendimiento del sistema neonatal.
- * 
+ *
  * @returns Una promesa que resuelve con un objeto de tipo {@link MetricasGenerales}.
  */
 export async function getMetricasGenerales(): Promise<MetricasGenerales> {
@@ -40,7 +40,7 @@ export async function getMetricasGenerales(): Promise<MetricasGenerales> {
 
 /**
  * Obtiene las estadísticas desagregadas por paciente para análisis clínico y administrativo.
- * 
+ *
  * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link EstadisticaPacientes}.
  */
 export async function getEstadisticasPacientes(): Promise<

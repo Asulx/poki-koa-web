@@ -14,7 +14,7 @@ type EstadisticaCardProps = {
 
 /**
  * Componente de tarjeta para visualizar métricas o estadísticas resumidas en la interfaz.
- * 
+ *
  * @param props Contiene el título, el valor numérico y una descripción opcional.
  * @returns Un elemento `<article>` estructurado con la información estadística.
  */

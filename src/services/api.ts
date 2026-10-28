@@ -12,7 +12,7 @@ export const TOKEN_KEY = 'pokikoa_token';
 /**
  * Extrae y formatea los mensajes de error devueltos por el backend (Django REST Framework).
  * Soporta estructuras de tipo `{"detail": "..."}` o errores de validación por campo `{"campo": ["mensaje"]}`.
- * 
+ *
  * @param datos - Objeto de datos desconocido proveniente de la respuesta HTTP de error.
  * @returns Una cadena de texto con el mensaje de error unificado.
  */
@@ -28,7 +28,7 @@ function extraerMensaje(datos: unknown): string {
 /**
  * Función centralizada para realizar peticiones HTTP a la API.
  * Inyecta automáticamente el token de autorización si está presente y maneja la respuesta y los errores del servidor.
- * 
+ *
  * @typeParam T - Tipo de dato esperado en la respuesta de la API.
  * @param ruta - Ruta relativa del endpoint a consultar.
  * @param opciones - Opciones de configuración adicionales para la petición `fetch` (método, cuerpo, etc.).

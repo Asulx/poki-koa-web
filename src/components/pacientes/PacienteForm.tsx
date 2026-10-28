@@ -21,7 +21,7 @@ type PacienteFormProps = {
  * Componente de formulario integral para el registro y actualización de datos de pacientes.
  * Emplea React Hook Form y esquemas Zod para la validación tipada en tiempo real,
  * gestionando de forma segura los estados de carga y envío asíncrono.
- * 
+ *
  * @param props Contiene los valores iniciales opcionales y la función manejadora de envío.
  * @returns Un elemento `<form>` estructurado con todos los campos clínicos y demográficos del paciente.
  */

@@ -4,7 +4,7 @@ import './Table.css';
 
 /**
  * Define la estructura y el comportamiento de una columna dentro de la tabla genérica.
- * 
+ *
  * @template T Tipo de objeto que representa una fila de datos.
  */
 export type TableColumn<T> = {
@@ -18,7 +18,7 @@ export type TableColumn<T> = {
 
 /**
  * Propiedades requeridas para el componente Table.
- * 
+ *
  * @template T Tipo de objeto que conforma los datos de las filas.
  */
 type TableProps<T> = {
@@ -34,7 +34,7 @@ type TableProps<T> = {
  * Componente de tabla genérica y reutilizable para el despliegue estructurado de datos.
  * Soporta tipado estricto mediante genéricos, renderizado personalizado de celdas
  * y optimización de claves de filas (*row keys*).
- * 
+ *
  * @template T Tipo de datos de los elementos tabulares.
  * @param props Contiene las columnas, los datos y la función opcional de clave de fila.
  * @returns Un elemento `<table>` estructurado con sus cabeceras y filas correspondientes.

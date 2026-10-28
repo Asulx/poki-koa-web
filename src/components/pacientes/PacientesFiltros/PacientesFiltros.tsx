@@ -32,7 +32,7 @@ type PacientesFiltrosProps = {
  * Componente de filtrado avanzado para la lista de pacientes.
  * Permite buscar por texto libre y filtrar por múltiples criterios clínicos y demográficos,
  * además de proveer un botón reactivo para limpiar dichos filtros.
- * 
+ *
  * @param props Contiene los valores de los filtros y las funciones manejadoras de estado.
  * @returns Una sección HTML estructurada con los controles de búsqueda y filtrado.
  */

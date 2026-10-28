@@ -17,7 +17,7 @@ type ModalProps = {
  * Implementa el patrón de retorno temprano para ocultarse cuando no está activo,
  * un fondo semitransparente (*overlay*) para cerrar al hacer clic fuera,
  * y prevención de propagación de eventos para proteger el contenido interno.
- * 
+ *
  * @param props Contiene el estado de visibilidad, la función de cierre y los nodos hijos.
  * @returns El contenedor superpuesto del modal o `null` si está cerrado.
  */

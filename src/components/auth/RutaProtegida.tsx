@@ -17,7 +17,7 @@ type Props = {
 /**
  * Guardián de rutas para controlar el acceso según el estado de autenticación y rol del usuario.
  * Redirige a `/login` si no hay sesión activa o al inicio `/` si el usuario no posee un rol autorizado.
- * 
+ *
  * @param props Contiene la lista opcional de roles autorizados.
  * @returns El componente de la ruta anidada (`<Outlet />`) si cumple los permisos, o un componente de redirección (`<Navigate />`).
  */

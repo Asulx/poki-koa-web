@@ -43,7 +43,7 @@ interface BebePayload {
 
 /**
  * Mapea un objeto de tipo {@link BebeApi} proveniente del servidor a la interfaz interna {@link Paciente}.
- * 
+ *
  * @param bebe - Objeto de datos del bebé en formato de API.
  * @returns El objeto transformado a la entidad {@link Paciente}.
  */
@@ -67,7 +67,7 @@ function bebeApiAPaciente(bebe: BebeApi): Paciente {
 
 /**
  * Mapea los datos del formulario de paciente {@link PacienteFormData} al formato de carga útil {@link BebePayload} aceptado por la API.
- * 
+ *
  * @param paciente - Objeto con los datos del formulario de paciente.
  * @returns El payload adaptado para las peticiones HTTP de escritura.
  */
@@ -88,7 +88,7 @@ function pacienteAPayload(paciente: PacienteFormData): BebePayload {
 export const pacientesService = {
   /**
    * Obtiene la lista completa de pacientes registrados en la unidad.
-   * 
+   *
    * @returns Una promesa que resuelve con un arreglo de objetos {@link Paciente}.
    */
   async listar(): Promise<Paciente[]> {
@@ -99,7 +99,7 @@ export const pacientesService = {
 
   /**
    * Obtiene los datos detallados de un paciente específico a partir de su ID.
-   * 
+   *
    * @param id - Identificador numérico único del paciente.
    * @returns Una promesa que resuelve con el objeto {@link Paciente} correspondiente.
    */
@@ -111,7 +111,7 @@ export const pacientesService = {
 
   /**
    * Registra un nuevo paciente en el sistema a partir de los datos del formulario.
-   * 
+   *
    * @param paciente - Datos del formulario de creación de paciente.
    * @returns Una promesa que resuelve con el objeto {@link Paciente} recién creado.
    */
@@ -126,7 +126,7 @@ export const pacientesService = {
 
   /**
    * Actualiza los datos de un paciente existente.
-   * 
+   *
    * @param id - Identificador numérico único del paciente a actualizar.
    * @param paciente - Datos actualizados provenientes del formulario.
    * @returns Una promesa que resuelve con el objeto {@link Paciente} actualizado.

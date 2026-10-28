@@ -9,7 +9,7 @@ import Table from '@/components/ui/Table/Table';
 /**
  * Componente de página para la demostración y validación visual de los componentes de UI del sistema.
  * Agrupa botones, campos de entrada, tarjetas, modales y tablas bajo los estándares de diseño.
- * 
+ *
  * @returns Un elemento JSX con la vista de demostración de componentes UI.
  */
 export default function ComponentesDemoPage() {

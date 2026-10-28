@@ -10,7 +10,7 @@ import Header from './Header';
  * Orquesta la estructura general de la interfaz incluyendo la barra lateral de navegación (`Sidebar`),
  * la cabecera superior (`Header`) y el contenedor dinámico para las rutas hijas (`<Outlet />`).
  * Gestiona de manera centralizada el estado de apertura del menú para dispositivos móviles.
- * 
+ *
  * @returns La estructura contenedora completa de la vista principal del sistema.
  */
 export default function MainLayout() {

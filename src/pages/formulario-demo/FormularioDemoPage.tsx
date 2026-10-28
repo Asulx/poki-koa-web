@@ -10,7 +10,7 @@ import {
  * Componente de página para el formulario de demostración.
  * Implementa validación robusta de formularios mediante `react-hook-form` y esquemas Zod,
  * gestionando el registro de campos, captura de errores y el envío de datos.
- * 
+ *
  * @returns Un elemento JSX con la vista y lógica del formulario de demostración.
  */
 export default function FormularioDemoPage() {

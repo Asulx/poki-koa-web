@@ -11,7 +11,7 @@ import type { PacienteFormData } from '@/forms/schemas/pacienteSchema';
  * Componente de página para la edición de la información de un paciente existente.
  * Gestiona la recuperación asíncrona de datos basada en el ID de la ruta, validaciones defensivas,
  * estados de carga, manejo de errores y envío de cambios hacia el servicio de pacientes.
- * 
+ *
  * @returns Un elemento JSX con la vista y lógica correspondiente a la edición del paciente.
  */
 export default function PacienteEditPage() {

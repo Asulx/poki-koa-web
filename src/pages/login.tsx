@@ -29,7 +29,7 @@ const demoUsers = [
 /**
  * Función auxiliar para procesar la lógica de autenticación del formulario.
  * Desanidada para mantener el componente principal plano y legible.
- * 
+ *
  * @param e - Evento de formulario de React.
  * @param usuario - Nombre de usuario ingresado en el estado.
  * @param password - Contraseña ingresada en el estado.
@@ -42,7 +42,7 @@ function procesarLogin(e: React.FormEvent, usuario: string, password: string) {
 /**
  * Componente de página para el inicio de sesión (Login) en el sistema Poki Koa.
  * Permite la autenticación de usuarios clínicos y muestra perfiles de demostración.
- * 
+ *
  * @returns Un elemento JSX con la vista completa del login.
  */
 export default function Login() {

@@ -84,7 +84,7 @@ interface SidebarProps {
  * Componente de barra lateral de navegación (*Sidebar*).
  * Organiza los enlaces del sistema por categorías, gestiona el estado responsivo
  * de apertura/cierre y muestra la información del rol del usuario activo en turno.
- * 
+ *
  * @param props Contiene el estado de visibilidad `open` y la función de cierre `onClose`.
  * @returns El contenedor lateral de navegación junto con su overlay de fondo para móviles.
  */

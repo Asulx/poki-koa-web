@@ -23,7 +23,7 @@ type PacientesChartProps = {
 /**
  * Componente visual encargado de renderizar un gráfico de líneas
  * para mostrar la evolución temporal del flujo de pacientes.
- * 
+ *
  * @param props Contiene el arreglo de datos estadísticos para graficar.
  * @returns Una sección HTML estructurada con el gráfico responsivo o un mensaje de ausencia de datos.
  */

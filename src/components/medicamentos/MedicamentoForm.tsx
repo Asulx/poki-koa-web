@@ -19,7 +19,7 @@ type MedicamentoFormProps = {
  * Componente de formulario para la creación y edición de medicamentos.
  * Utiliza React Hook Form y Zod para la validación de campos, gestionando
  * de manera reactiva los estados de error, carga y habilitación del botón de envío.
- * 
+ *
  * @param props Contiene los valores iniciales opcionales (`defaultValues`).
  * @returns Un elemento `<form>` estructurado con campos validados para la gestión de medicamentos.
  */

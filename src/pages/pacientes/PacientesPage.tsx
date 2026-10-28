@@ -14,7 +14,7 @@ const ITEMS_PER_PAGE = 5;
 /**
  * Componente de página para la gestión, filtrado, paginación y visualización del listado de pacientes.
  * Conecta con el servicio de pacientes, gestiona estados de carga/error y facilita la navegación hacia registros o ediciones.
- * 
+ *
  * @returns Un elemento JSX con la vista completa del catálogo y filtros de pacientes.
  */
 export default function PacientesPage() {

@@ -31,7 +31,7 @@ import MapaCunasPage from '@/pages/mapa/MapaCunasPage';
  * Componente principal de enrutamiento (AppRouter).
  * Define la estructura de navegación de la aplicación mediante React Router,
  * organizando las rutas públicas, protegidas, vistas de gestión clínica y el manejo de rutas no encontradas (404).
- * 
+ *
  * @returns Un elemento JSX con la configuración completa de rutas del sistema.
  */
 export default function AppRouter() {

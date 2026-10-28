@@ -12,7 +12,7 @@ const MEDICAMENTOS_ENDPOINT = '/medicamentos';
 
 /**
  * Obtiene el listado completo de medicamentos registrados en el sistema.
- * 
+ *
  * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link Medicamento}.
  */
 export async function getMedicamentos(): Promise<Medicamento[]> {
@@ -23,7 +23,7 @@ export async function getMedicamentos(): Promise<Medicamento[]> {
 
 /**
  * Obtiene los detalles de un medicamento específico a partir de su identificador único.
- * 
+ *
  * @param id - Identificador numérico único del medicamento.
  * @returns Una promesa que resuelve con el objeto {@link Medicamento} correspondiente.
  */
@@ -35,7 +35,7 @@ export async function getMedicamentoPorId(id: number): Promise<Medicamento> {
 
 /**
  * Busca y filtra medicamentos según su principio activo.
- * 
+ *
  * @param principioActivo - Cadena de texto con el principio activo o nombre genérico a buscar.
  * @returns Una promesa que resuelve con un arreglo de medicamentos que coinciden con el criterio.
  */
@@ -53,7 +53,7 @@ export async function buscarMedicamentosPorPrincipioActivo(
 
 /**
  * Valida si un medicamento cuenta con stock disponible superior a cero para su dispensación.
- * 
+ *
  * @param id - Identificador numérico único del medicamento a verificar.
  * @returns Una promesa que resuelve con `true` si hay stock disponible, o `false` en caso contrario.
  */

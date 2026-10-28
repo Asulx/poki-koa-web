@@ -17,7 +17,7 @@ interface ModalAsignacionProps {
 /**
  * Componente de ventana modal para la asignación de pacientes a una cuna específica
  * dentro de la unidad de neonatología. Gestiona el estado local del formulario de ingreso.
- * 
+ *
  * @param props - Propiedades del componente {@link ModalAsignacionProps}.
  * @returns Un elemento JSX con la estructura y lógica de la ventana modal.
  */

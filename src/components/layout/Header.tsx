@@ -10,7 +10,7 @@ interface HeaderProps {
  * Componente de cabecera principal de la aplicación.
  * Muestra el botón de navegación para dispositivos móviles o colapsables, el título de la sección
  * y la información del usuario autenticado.
- * 
+ *
  * @param props Contiene el manejador de eventos `onMenuClick`.
  * @returns Un elemento `<header>` estructurado con la barra de navegación superior.
  */

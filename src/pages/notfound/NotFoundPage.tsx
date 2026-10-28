@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
  * Componente de página de error 404 (No encontrada).
  * Se muestra cuando el usuario intenta acceder a una ruta inexistente dentro del sistema Poki Koa,
  * ofreciendo un enlace directo de retorno a la página principal.
- * 
+ *
  * @returns Un elemento JSX con la vista de error de ruta no encontrada.
  */
 export const NotFoundPage: React.FC = () => {

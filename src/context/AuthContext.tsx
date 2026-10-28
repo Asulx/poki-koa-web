@@ -24,7 +24,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * Lee y deserializa el usuario guardado previamente en el almacenamiento local.
- * 
+ *
  * @returns El objeto de tipo `Usuario` si existe y es válido, de lo contrario `null`.
  */
 function leerUsuarioGuardado(): Usuario | null {
@@ -39,7 +39,7 @@ function leerUsuarioGuardado(): Usuario | null {
 /**
  * Proveedor del contexto de autenticación (*Provider*).
  * Gestiona el estado reactivo de sesión del usuario y su persistencia en el almacenamiento local.
- * 
+ *
  * @param props Contiene los elementos hijos de React que consumirán el contexto.
  * @returns El proveedor de contexto envolviendo a los componentes hijos.
  */
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 /**
  * Hook personalizado para consumir de manera segura el contexto de autenticación.
- * 
+ *
  * @throws {Error} Si es invocado fuera de un componente envuelto por `AuthProvider`.
  * @returns El objeto con el estado y los métodos de autenticación del contexto.
  */

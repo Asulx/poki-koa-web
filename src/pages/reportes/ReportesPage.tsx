@@ -8,7 +8,7 @@ import Card from '@/components/ui/Card/Card';
 /**
  * Función auxiliar asíncrona para cargar los datos del reporte.
  * Desanidada del gancho principal para mantener la legibilidad y arquitectura plana.
- * 
+ *
  * @param setDatos - Función para actualizar el estado con los datos del reporte obtenidos.
  * @param setLoading - Función para gestionar el indicador de carga del módulo.
  */
@@ -30,7 +30,7 @@ async function cargarDatosReporte(
 /**
  * Componente de página para la visualización de reportes, métricas clave y análisis del sistema.
  * Gestiona la carga asíncrona de datos clínicos y ofrece opciones de exportación a PDF y Excel.
- * 
+ *
  * @returns Un elemento JSX con la vista analítica y de reportes.
  */
 export default function ReportesPage() {

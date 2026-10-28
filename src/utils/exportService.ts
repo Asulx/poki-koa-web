@@ -6,7 +6,7 @@
 
 /**
  * Simula la exportación de un conjunto de datos a formato PDF.
- * 
+ *
  * @param datos - Datos o estructura a exportar
  * @returns void
  */
@@ -17,7 +17,7 @@ export const exportarAPDF = (datos: any): void => {
 
 /**
  * Simula la exportación de un conjunto de datos a formato Excel.
- * 
+ *
  * @param datos - Datos o estructura a exportar
  * @returns void
  */

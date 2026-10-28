@@ -17,7 +17,7 @@ import { hoyISO } from '@/utils/fechas';
 /**
  * Función auxiliar asíncrona para cargar los catálogos estáticos iniciales (turnos, personal y cunas).
  * Desanidada del hook de efecto para mantener un diseño modular y limpio.
- * 
+ *
  * @param setTurnos - Función para actualizar el estado de turnos.
  * @param setPersonal - Función para actualizar el estado del personal.
  * @param setCunas - Función para actualizar el estado de cunas.
@@ -30,7 +30,11 @@ async function cargarCatalogosIniciales(
   setError: (error: string) => void
 ) {
   try {
-    const [t, p, c] = await Promise.all([getTurnos(), getPersonal(), getCunas()]);
+    const [t, p, c] = await Promise.all([
+      getTurnos(),
+      getPersonal(),
+      getCunas(),
+    ]);
     setTurnos(t);
     setPersonal(p);
     setCunas(c);
@@ -43,7 +47,7 @@ async function cargarCatalogosIniciales(
 /**
  * Función auxiliar asíncrona para recuperar el listado de asignaciones según la fecha seleccionada.
  * Desanidada para facilitar la lectura del ciclo de vida del componente.
- * 
+ *
  * @param fecha - Cadena con la fecha actual en formato ISO.
  * @param setAsignaciones - Función para actualizar el estado de las asignaciones.
  * @param setError - Función para gestionar los mensajes de error.
@@ -66,7 +70,7 @@ async function cargarAsignacionesPorFecha(
  * Componente de página para la vista de jefatura.
  * Permite gestionar los turnos de la unidad neonatal, asignar profesionales a cunas específicas
  * según la fecha seleccionada y visualizar el registro tabular de asignaciones activas.
- * 
+ *
  * @returns Un elemento JSX con la vista administrativa completa de turnos y asignaciones.
  */
 export default function TurnosPage() {

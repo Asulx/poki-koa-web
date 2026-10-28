@@ -9,7 +9,7 @@ import { hoyISO } from '@/utils/fechas';
 /**
  * Función auxiliar asíncrona para recuperar las cunas asignadas al profesional según la fecha seleccionada.
  * Extraída para mantener el cuerpo principal del componente plano y desacoplado del efecto.
- * 
+ *
  * @param fecha - Cadena de texto con la fecha en formato ISO.
  * @param setCunas - Función para actualizar el estado del listado de cunas asignadas.
  * @param setError - Función para actualizar el estado de errores en caso de fallo.
@@ -33,7 +33,7 @@ async function cargarCunasAsignadas(
  * Componente de página para la vista del profesional médico.
  * Permite consultar y visualizar las cunas y pacientes asignados a su turno para una fecha específica,
  * mostrando métricas clínicas y signos vitales en tiempo real.
- * 
+ *
  * @returns Un elemento JSX con la vista estructurada de cunas asignadas.
  */
 export default function MisCunasPage() {

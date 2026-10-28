@@ -9,7 +9,7 @@ import type { ResumenSupervisor } from '@/types/dashboard';
 
 /**
  * Obtiene el resumen consolidado de supervisión para el panel principal.
- * 
+ *
  * @returns Una promesa que resuelve con los datos tipados de tipo {@link ResumenSupervisor}.
  */
 export const getResumenSupervisor = () =>

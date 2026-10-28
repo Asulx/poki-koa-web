@@ -14,7 +14,7 @@ type CardProps = {
  * Componente contenedor de tipo Tarjeta (*Card*).
  * Organiza visualmente la información estructurándola en una cabecera con título
  * y un cuerpo flexible para albergar diversos componentes o contenidos.
- * 
+ *
  * @param props Contiene el título de la tarjeta y los nodos hijos.
  * @returns Un contenedor HTML estilizado en forma de tarjeta.
  */

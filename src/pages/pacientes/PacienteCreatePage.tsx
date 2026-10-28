@@ -9,7 +9,7 @@ import type { PacienteFormData } from '@/forms/schemas/pacienteSchema';
  * Componente de página para el registro de un nuevo paciente en el sistema.
  * Gestiona la lógica de envío de datos del formulario, la comunicación con el servicio de pacientes,
  * el manejo de excepciones y la redirección al listado general tras un registro exitoso.
- * 
+ *
  * @returns Un elemento JSX que representa la vista completa de registro de pacientes.
  */
 export default function PacienteCreatePage() {

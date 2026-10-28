@@ -10,7 +10,7 @@ import './EstadisticasResumen.css';
 /**
  * Componente contenedor encargado de gestionar, cargar y visualizar
  * el resumen general de estadísticas y métricas del sistema médico (pacientes y medicamentos).
- * 
+ *
  * @returns El panel completo de estadísticas con sus tarjetas de resumen y gráficos analíticos.
  */
 export default function EstadisticasResumen() {

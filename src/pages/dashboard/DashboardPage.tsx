@@ -7,7 +7,7 @@ import './DashboardPage.css';
  * Componente de página principal del panel de control (*Dashboard*).
  * Muestra el resumen general, las métricas estadísticas y el estado actual
  * de la unidad de neonatología de manera estructurada y responsiva.
- * 
+ *
  * @returns Un elemento JSX que representa la vista completa del panel de control.
  */
 export default function DashboardPage() {
