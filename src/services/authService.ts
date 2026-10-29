@@ -1,25 +1,44 @@
 /**
  * @file authService.ts
- * @description Servicio de autenticación para la gestión de inicio de sesión y validación de credenciales
- * con el backend de Django REST Framework mediante el cliente HTTP centralizado.
+ * @description Ciclo de vida de la sesión contra `/api/auth/`.
  */
 
-import { apiFetch } from '@/services/api';
-import type { Usuario } from '@/types/auth';
-
-/** Tipo que define la estructura de la respuesta exitosa de autenticación, combinando los datos del usuario y el token de sesión. */
-type LoginRespuesta = Usuario & { token: string };
+import { api } from '@/api/axios';
+import { mapSesion, mapSesionRehidratada, type ApiSesion } from '@/api/mappers';
+import type { Credenciales, Sesion, SesionRehidratada } from '@/types/auth';
 
 /**
- * Autentica a un usuario en el sistema enviando sus credenciales al endpoint de login.
+ * Inicia sesión con credenciales clínicas.
  *
- * @param username - Nombre de usuario o identificador clínico.
- * @param password - Contraseña de acceso del usuario.
- * @returns Una promesa que resuelve con los datos del usuario y el token de autenticación.
+ * @param credenciales - Usuario y contraseña.
+ * @returns Sesión con token, usuario y perfil.
  */
-export function login(username: string, password: string) {
-  return apiFetch<LoginRespuesta>('/auth/login/', {
-    method: 'POST',
-    body: JSON.stringify({ username, password }),
+export async function iniciarSesion(
+  credenciales: Credenciales
+): Promise<Sesion> {
+  const { data } = await api.post<ApiSesion>('/auth/login/', {
+    username: credenciales.username.trim(),
+    password: credenciales.password,
   });
+  return mapSesion(data);
+}
+
+/**
+ * Invalida el token del usuario en el servidor.
+ *
+ * Es idempotente desde el punto de vista del cliente: si el token ya no
+ * existe, el backend responde 204 igualmente.
+ */
+export async function cerrarSesion(): Promise<void> {
+  await api.post('/auth/logout/');
+}
+
+/**
+ * Recupera la sesión actual a partir del token guardado.
+ *
+ * @returns Usuario y perfil, sin token.
+ */
+export async function obtenerSesion(): Promise<SesionRehidratada> {
+  const { data } = await api.get<ApiSesion>('/auth/me/');
+  return mapSesionRehidratada(data);
 }

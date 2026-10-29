@@ -1,54 +1,72 @@
 /**
  * @file reportesService.ts
- * @description Servicio encargado de la obtención de reportes, métricas generales del sistema
- * y estadísticas de pacientes para la visualización analítica de la unidad neonatal.
+ * @description Métricas agregadas del dashboard, series temporales,
+ * distribuciones y exportación CSV.
  */
 
-import { api } from '@/api/axios';
-
+import { api, descargarArchivo } from '@/api/axios';
+import {
+  mapDistribucion,
+  mapResumen,
+  mapSerie,
+  type ApiResumen,
+} from '@/api/mappers';
 import type {
-  DatosReporte,
-  MetricasGenerales,
-  EstadisticaPacientes,
+  DistribucionReporte,
+  ResumenOperacion,
+  SerieActividad,
 } from '@/types/reporte';
-
-const REPORTES_ENDPOINT = '/reportes';
+import { fechaHoy } from '@/utils/fechas';
 
 /**
- * Obtiene el conjunto completo de datos analíticos para la generación de reportes.
+ * Obtiene el resumen operacional completo.
  *
- * @returns Una promesa que resuelve con los datos de tipo {@link DatosReporte}.
+ * @returns Métricas del dashboard.
  */
-export async function obtenerDatosReporte(): Promise<DatosReporte> {
-  const response = await api.get<DatosReporte>(REPORTES_ENDPOINT);
-
-  return response.data;
+export async function obtenerResumen(): Promise<ResumenOperacion> {
+  const { data } = await api.get<ApiResumen>('/reportes/resumen/');
+  return mapResumen(data);
 }
 
 /**
- * Obtiene las métricas generales y de rendimiento del sistema neonatal.
+ * Obtiene la serie diaria de ingresos y alertas.
  *
- * @returns Una promesa que resuelve con un objeto de tipo {@link MetricasGenerales}.
+ * @param dias - Cantidad de días hacia atrás (1 a 90).
+ * @returns Serie normalizada.
  */
-export async function getMetricasGenerales(): Promise<MetricasGenerales> {
-  const response = await api.get<MetricasGenerales>(
-    `${REPORTES_ENDPOINT}/metricas`
+export async function obtenerSerie(dias = 14): Promise<SerieActividad> {
+  const { data } = await api.get<{
+    dias: number;
+    serie: Array<{ fecha: string; ingresos: number; alertas: number }>;
+  }>('/reportes/serie/', { params: { dias } });
+  return mapSerie(data);
+}
+
+/**
+ * Obtiene las distribuciones agregadas.
+ *
+ * @returns Distribuciones de cunas, alertas, medicamentos y personal.
+ */
+export async function obtenerDistribucion(): Promise<DistribucionReporte> {
+  const { data } = await api.get('/reportes/distribucion/');
+  return mapDistribucion(data);
+}
+
+/**
+ * Descarga el resumen operacional en CSV. El nombre del archivo usa la fecha
+ * institucional para que coincida con el reporte generado por el backend.
+ */
+export async function exportarResumenCsv(): Promise<void> {
+  await descargarArchivo(
+    '/reportes/exportar/',
+    `reporte-poki-koa-${fechaHoy()}.csv`
   );
-
-  return response.data;
 }
 
-/**
- * Obtiene las estadísticas desagregadas por paciente para análisis clínico y administrativo.
- *
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link EstadisticaPacientes}.
- */
-export async function getEstadisticasPacientes(): Promise<
-  EstadisticaPacientes[]
-> {
-  const response = await api.get<EstadisticaPacientes[]>(
-    `${REPORTES_ENDPOINT}/pacientes`
-  );
-
-  return response.data;
-}
+/** Servicio agrupado de reportes. */
+export const reportesService = {
+  resumen: obtenerResumen,
+  serie: obtenerSerie,
+  distribucion: obtenerDistribucion,
+  exportarCsv: exportarResumenCsv,
+};

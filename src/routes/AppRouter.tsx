@@ -1,72 +1,88 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+/**
+ * @file AppRouter.tsx
+ * @description Configuración de rutas de Poki Koa. El acceso es público; el
+ * resto de pantallas quedan bajo el guardián de sesión y el layout privado.
+ * La bitácora y sus vistas derivadas exigen rol administrador.
+ */
 
-import MainLayout from '@/components/layout/MainLayout';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 import RutaProtegida from '@/components/auth/RutaProtegida';
-
+import MainLayout from '@/components/layout/MainLayout';
+import Spinner from '@/components/ui/Spinner/Spinner';
 import LoginPage from '@/pages/login/LoginPage';
-import DashboardPage from '@/pages/dashboard/DashboardPage';
-import PacientesPage from '@/pages/pacientes/PacientesPage';
-import PacienteCreatePage from '@/pages/pacientes/PacienteCreatePage';
-import PacienteEditPage from '@/pages/pacientes/PacienteEditPage';
-import PacienteDetalle from '@/pages/pacientes/PacienteDetalle';
-
-import MedicamentosPage from '@/pages/medicamentos/MedicamentosPage';
-import MedicamentoCreatePage from '@/pages/medicamentos/MedicamentoCreatePage';
-import MedicamentoEditPage from '@/pages/medicamentos/MedicamentoEditPage';
-
-import ReportesPage from '@/pages/reportes/ReportesPage';
-import ConfiguracionPage from '@/pages/configuracion/ConfiguracionPage';
-import TurnosPage from '@/pages/turnos/TurnosPage';
-import MisCunasPage from '@/pages/turnos/MisCunasPage';
-import PortalApoderadoPage from '@/pages/portal/PortalApoderadoPage';
-import { NotFoundPage } from '@/pages/notfound/NotFoundPage';
-
-import ComponentesDemoPage from '@/pages/ComponentesDemoPage';
-import FormularioDemoPage from '@/pages/formulario-demo/FormularioDemoPage';
-
-// Importación de tu nueva vista del Mapa de Cunas
-import MapaCunasPage from '@/pages/mapa/MapaCunasPage';
+import NotFoundPage from '@/pages/notfound/NotFoundPage';
 
 /**
- * Componente principal de enrutamiento (AppRouter).
- * Define la estructura de navegación de la aplicación mediante React Router,
- * organizando las rutas públicas, protegidas, vistas de gestión clínica y el manejo de rutas no encontradas (404).
+ * Las pantallas privadas se cargan bajo demanda para que el paquete inicial
+ * solo incluya el acceso y el layout. Cada módulo (incluido Recharts en el
+ * panel y los reportes) llega en su propio fragmento.
+ */
+const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
+const MapaCunasPage = lazy(() => import('@/pages/mapa/MapaCunasPage'));
+const MisCunasPage = lazy(() => import('@/pages/turnos/MisCunasPage'));
+const PacientesPage = lazy(() => import('@/pages/pacientes/PacientesPage'));
+const PacienteFormPage = lazy(
+  () => import('@/pages/pacientes/PacienteFormPage')
+);
+const PacienteDetallePage = lazy(
+  () => import('@/pages/pacientes/PacienteDetallePage')
+);
+const MedicamentosPage = lazy(
+  () => import('@/pages/medicamentos/MedicamentosPage')
+);
+const PlanesPage = lazy(() => import('@/pages/planes/PlanesPage'));
+const AlertasPage = lazy(() => import('@/pages/alertas/AlertasPage'));
+const TurnosPage = lazy(() => import('@/pages/turnos/TurnosPage'));
+const ReportesPage = lazy(() => import('@/pages/reportes/ReportesPage'));
+const RegistrosPage = lazy(() => import('@/pages/registros/RegistrosPage'));
+const ConfiguracionPage = lazy(
+  () => import('@/pages/configuracion/ConfiguracionPage')
+);
+
+/**
+ * Árbol de rutas de la aplicación.
  *
- * @returns Un elemento JSX con la configuración completa de rutas del sistema.
+ * @returns Enrutador con pantallas públicas, privadas y 404.
  */
 export default function AppRouter() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<DashboardPage />} />
+      <Suspense fallback={<Spinner bloque texto="Cargando la aplicación…" />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/pacientes" element={<PacientesPage />} />
-          <Route path="/pacientes/nuevo" element={<PacienteCreatePage />} />
-          <Route path="/pacientes/editar/:id" element={<PacienteEditPage />} />
-          <Route path="/pacientes/detalle" element={<PacienteDetalle />} />
+          <Route element={<RutaProtegida />}>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/mapa" element={<MapaCunasPage />} />
+              <Route path="/mis-cunas" element={<MisCunasPage />} />
 
-          <Route path="/medicamentos" element={<MedicamentosPage />} />
-          <Route
-            path="/medicamentos/nuevo"
-            element={<MedicamentoCreatePage />}
-          />
-          <Route
-            path="/medicamentos/editar/:id"
-            element={<MedicamentoEditPage />}
-          />
+              <Route path="/pacientes" element={<PacientesPage />} />
+              <Route path="/pacientes/nuevo" element={<PacienteFormPage />} />
+              <Route path="/pacientes/:id" element={<PacienteDetallePage />} />
+              <Route
+                path="/pacientes/:id/editar"
+                element={<PacienteFormPage />}
+              />
 
-          <Route path="/reportes" element={<ReportesPage />} />
-          <Route path="/configuracion" element={<ConfiguracionPage />} />
-          <Route path="/componentes" element={<ComponentesDemoPage />} />
-          <Route path="/formulario-demo" element={<FormularioDemoPage />} />
+              <Route path="/medicamentos" element={<MedicamentosPage />} />
+              <Route path="/planes" element={<PlanesPage />} />
+              <Route path="/alertas" element={<AlertasPage />} />
+              <Route path="/turnos" element={<TurnosPage />} />
+              <Route path="/reportes" element={<ReportesPage />} />
+              <Route path="/configuracion" element={<ConfiguracionPage />} />
 
-          {/* Ruta agregada para tu Issue #53 */}
-          <Route path="/mapa" element={<MapaCunasPage />} />
-        </Route>
+              <Route element={<RutaProtegida roles={['administrador']} />}>
+                <Route path="/registros" element={<RegistrosPage />} />
+              </Route>
+            </Route>
+          </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

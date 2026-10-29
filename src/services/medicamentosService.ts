@@ -1,64 +1,157 @@
 /**
  * @file medicamentosService.ts
- * @description Servicio encargado de la gestión de medicamentos en el sistema.
- * Proporciona funciones asíncronas para consultar el catálogo general, buscar por ID o principio activo,
- * y validar la disponibilidad de stock clínico utilizando el cliente HTTP configurado.
+ * @description Inventario farmacéutico (`/catalogo-medicamentos/`) y
+ * prescripciones por paciente (`/medicamentos/`). Son recursos distintos.
  */
 
 import { api } from '@/api/axios';
-import type { Medicamento } from '@/types/medicamento';
+import {
+  horaCorta,
+  mapCatalogo,
+  mapMedicamento,
+  type ApiMedicamento,
+} from '@/api/mappers';
+import type {
+  CatalogoPayload,
+  EstadoPrescripcion,
+  FiltrosCatalogo,
+  Medicamento,
+  MedicamentoCatalogo,
+  MedicamentoPayload,
+} from '@/types/medicamento';
 
-const MEDICAMENTOS_ENDPOINT = '/medicamentos';
+/* ----------------------------- Catálogo ----------------------------- */
 
 /**
- * Obtiene el listado completo de medicamentos registrados en el sistema.
+ * Lista productos del inventario.
  *
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link Medicamento}.
+ * @param filtros - Texto y filtro de stock crítico.
+ * @returns Productos normalizados.
  */
-export async function getMedicamentos(): Promise<Medicamento[]> {
-  const response = await api.get<Medicamento[]>(MEDICAMENTOS_ENDPOINT);
+export async function listarCatalogo(
+  filtros: FiltrosCatalogo = {}
+): Promise<MedicamentoCatalogo[]> {
+  const params: Record<string, string | boolean> = {};
+  if (filtros.search?.trim()) params.search = filtros.search.trim();
+  if (filtros.stockBajo) params.stock_bajo = true;
 
-  return response.data;
+  const { data } = await api.get<
+    Array<{
+      id: number;
+      nombre: string;
+      principio_activo: string;
+      dosis_mg: string;
+      stock: number;
+    }>
+  >('/catalogo-medicamentos/', { params });
+  return data.map(mapCatalogo);
 }
 
 /**
- * Obtiene los detalles de un medicamento específico a partir de su identificador único.
+ * Crea un producto del catálogo.
  *
- * @param id - Identificador numérico único del medicamento.
- * @returns Una promesa que resuelve con el objeto {@link Medicamento} correspondiente.
+ * @param payload - Datos validados.
+ * @returns Producto creado.
  */
-export async function getMedicamentoPorId(id: number): Promise<Medicamento> {
-  const response = await api.get<Medicamento>(`${MEDICAMENTOS_ENDPOINT}/${id}`);
-
-  return response.data;
-}
-
-/**
- * Busca y filtra medicamentos según su principio activo.
- *
- * @param principioActivo - Cadena de texto con el principio activo o nombre genérico a buscar.
- * @returns Una promesa que resuelve con un arreglo de medicamentos que coinciden con el criterio.
- */
-export async function buscarMedicamentosPorPrincipioActivo(
-  principioActivo: string
-): Promise<Medicamento[]> {
-  const response = await api.get<Medicamento[]>(MEDICAMENTOS_ENDPOINT, {
-    params: {
-      principioActivo,
-    },
+export async function crearCatalogo(
+  payload: CatalogoPayload
+): Promise<MedicamentoCatalogo> {
+  const { data } = await api.post('/catalogo-medicamentos/', {
+    nombre: payload.nombre,
+    principio_activo: payload.principioActivo,
+    dosis_mg: payload.dosisMg,
+    stock: payload.stock,
   });
-
-  return response.data;
+  return mapCatalogo(data);
 }
 
 /**
- * Valida si un medicamento cuenta con stock disponible superior a cero para su dispensación.
+ * Actualiza un producto del catálogo.
  *
- * @param id - Identificador numérico único del medicamento a verificar.
- * @returns Una promesa que resuelve con `true` si hay stock disponible, o `false` en caso contrario.
+ * @param id - Identificador del producto.
+ * @param payload - Datos validados.
+ * @returns Producto actualizado.
  */
-export async function validarStockMedicamento(id: number): Promise<boolean> {
-  const medicamento = await getMedicamentoPorId(id);
-
-  return medicamento.stock > 0;
+export async function actualizarCatalogo(
+  id: number,
+  payload: CatalogoPayload
+): Promise<MedicamentoCatalogo> {
+  const { data } = await api.patch(`/catalogo-medicamentos/${id}/`, {
+    nombre: payload.nombre,
+    principio_activo: payload.principioActivo,
+    dosis_mg: payload.dosisMg,
+    stock: payload.stock,
+  });
+  return mapCatalogo(data);
 }
+
+/* -------------------------- Prescripciones -------------------------- */
+
+/** Filtros del listado de prescripciones. */
+export interface FiltrosPrescripciones {
+  pacienteId?: number;
+  estado?: EstadoPrescripcion;
+  search?: string;
+}
+
+/**
+ * Lista prescripciones de medicamentos.
+ *
+ * @param filtros - Paciente, estado o texto.
+ * @returns Prescripciones normalizadas.
+ */
+export async function listarPrescripciones(
+  filtros: FiltrosPrescripciones = {}
+): Promise<Medicamento[]> {
+  const params: Record<string, string | number> = {};
+  if (filtros.pacienteId) params.paciente = filtros.pacienteId;
+  if (filtros.estado) params.estado = filtros.estado;
+  if (filtros.search?.trim()) params.search = filtros.search.trim();
+
+  const { data } = await api.get<ApiMedicamento[]>('/medicamentos/', {
+    params,
+  });
+  return data.map(mapMedicamento);
+}
+
+/**
+ * Crea una prescripción para un paciente.
+ *
+ * @param payload - Datos validados.
+ * @returns Prescripción creada.
+ */
+export async function crearPrescripcion(
+  payload: MedicamentoPayload
+): Promise<Medicamento> {
+  const { data } = await api.post<ApiMedicamento>('/medicamentos/', {
+    paciente: payload.paciente,
+    nombre: payload.nombre,
+    dosis: payload.dosis,
+    via: payload.via,
+    hora: payload.hora,
+    estado: payload.estado ?? 'Pendiente',
+  });
+  return mapMedicamento(data);
+}
+
+/**
+ * Marca una prescripción como administrada.
+ *
+ * @param id - Identificador de la prescripción.
+ */
+export async function administrarPrescripcion(id: number): Promise<void> {
+  await api.post(`/medicamentos/${id}/administrar/`);
+}
+
+/** Hora normalizada para formularios de prescripción. */
+export const normalizarHora = horaCorta;
+
+/** Servicio agrupado de medicamentos. */
+export const medicamentosService = {
+  listarCatalogo,
+  crearCatalogo,
+  actualizarCatalogo,
+  listarPrescripciones,
+  crearPrescripcion,
+  administrar: administrarPrescripcion,
+};

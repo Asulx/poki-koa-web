@@ -1,75 +1,106 @@
 /**
  * @file turnosService.ts
- * @description Servicio encargado de la gestión de turnos, personal clínico, cunas
- * y asignaciones operativas en la unidad neonatal, utilizando el cliente HTTP centralizado.
+ * @description Turnos, asignaciones de personal y cunas del profesional.
  */
 
-import { apiFetch } from '@/services/api';
+import { api } from '@/api/axios';
+import {
+  mapAsignacion,
+  mapAsignacionPayload,
+  mapRespuestaMisCunas,
+  mapTurno,
+  type ApiAsignacion,
+  type ApiMisCunas,
+  type ApiTurno,
+} from '@/api/mappers';
 import type {
   Asignacion,
-  CunaAsignada,
-  CunaResumen,
-  NuevaAsignacion,
-  Personal,
+  AsignacionPayload,
+  RespuestaMisCunas,
   Turno,
 } from '@/types/turnos';
 
 /**
- * Obtiene el listado de turnos configurados en el sistema.
+ * Lista el catálogo de turnos.
  *
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link Turno}.
+ * @param soloActivos - Si es `true`, filtra los turnos habilitados.
+ * @returns Turnos normalizados.
  */
-export const getTurnos = () => apiFetch<Turno[]>('/turnos/');
-
-/**
- * Obtiene el listado del personal clínico disponible.
- *
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link Personal}.
- */
-export const getPersonal = () => apiFetch<Personal[]>('/personal/');
-
-/**
- * Obtiene un resumen general del estado de las cunas en la unidad.
- *
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link CunaResumen}.
- */
-export const getCunas = () => apiFetch<CunaResumen[]>('/cunas/');
-
-/**
- * Obtiene las asignaciones correspondientes a una fecha específica.
- *
- * @param fecha - Cadena de texto con la fecha a consultar (formato YYYY-MM-DD).
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link Asignacion}.
- */
-export const getAsignaciones = (fecha: string) =>
-  apiFetch<Asignacion[]>(`/asignaciones/?fecha=${fecha}`);
-
-/**
- * Crea una nueva asignación operativa en el sistema.
- *
- * @param datos - Objeto de tipo {@link NuevaAsignacion} con la información de la nueva asignación.
- * @returns Una promesa que resuelve con el objeto {@link Asignacion} creado.
- */
-export const crearAsignacion = (datos: NuevaAsignacion) =>
-  apiFetch<Asignacion>('/asignaciones/', {
-    method: 'POST',
-    body: JSON.stringify(datos),
+export async function listarTurnos(soloActivos = false): Promise<Turno[]> {
+  const { data } = await api.get<ApiTurno[]>('/turnos/', {
+    params: soloActivos ? { activo: true } : undefined,
   });
+  return data.map(mapTurno);
+}
 
 /**
- * Elimina una asignación existente a partir de su identificador único.
+ * Obtiene el turno vigente según la hora local del servidor.
  *
- * @param id - Identificador numérico único de la asignación a eliminar.
- * @returns Una promesa que resuelve cuando la operación se completa con éxito.
+ * @returns Turno actual o `null` si no hay ninguno que cubra la hora.
  */
-export const eliminarAsignacion = (id: number) =>
-  apiFetch<void>(`/asignaciones/${id}/`, { method: 'DELETE' });
+export async function obtenerTurnoActual(): Promise<Turno | null> {
+  const { data } = await api.get<{ turno: ApiTurno | null }>('/turnos/actual/');
+  return data.turno ? mapTurno(data.turno) : null;
+}
 
 /**
- * Obtiene las cunas asignadas al usuario en sesión para una fecha determinada.
+ * Lista asignaciones de un día.
  *
- * @param fecha - Cadena de texto con la fecha a consultar (formato YYYY-MM-DD).
- * @returns Una promesa que resuelve con un arreglo de objetos de tipo {@link CunaAsignada}.
+ * @param fecha - Fecha ISO (`YYYY-MM-DD`).
+ * @returns Asignaciones normalizadas.
  */
-export const getMisCunas = (fecha: string) =>
-  apiFetch<CunaAsignada[]>(`/asignaciones/mis-cunas/?fecha=${fecha}`);
+export async function listarAsignaciones(fecha: string): Promise<Asignacion[]> {
+  const { data } = await api.get<ApiAsignacion[]>('/asignaciones/', {
+    params: { fecha },
+  });
+  return data.map(mapAsignacion);
+}
+
+/**
+ * Crea una asignación de personal a turno y cuna.
+ *
+ * @param payload - Datos validados.
+ * @returns Asignación creada.
+ */
+export async function crearAsignacion(
+  payload: AsignacionPayload
+): Promise<Asignacion> {
+  const { data } = await api.post<ApiAsignacion>(
+    '/asignaciones/',
+    mapAsignacionPayload(payload)
+  );
+  return mapAsignacion(data);
+}
+
+/**
+ * Elimina una asignación.
+ *
+ * @param id - Identificador de la asignación.
+ */
+export async function eliminarAsignacion(id: number): Promise<void> {
+  await api.delete(`/asignaciones/${id}/`);
+}
+
+/**
+ * Recupera las cunas cubiertas hoy por el usuario autenticado.
+ *
+ * @returns Fecha, total y cunas asignadas.
+ */
+export async function obtenerMisCunas(): Promise<RespuestaMisCunas> {
+  const { data } = await api.get<{
+    fecha: string;
+    total: number;
+    cunas: ApiMisCunas[];
+  }>('/mis-cunas/');
+  return mapRespuestaMisCunas(data);
+}
+
+/** Servicio agrupado de turnos. */
+export const turnosService = {
+  listarTurnos,
+  turnoActual: obtenerTurnoActual,
+  listarAsignaciones,
+  crearAsignacion,
+  eliminarAsignacion,
+  misCunas: obtenerMisCunas,
+};

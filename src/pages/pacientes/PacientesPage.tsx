@@ -1,232 +1,419 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+/**
+ * @file PacientesPage.tsx
+ * @description Listado clínico de pacientes con búsqueda, filtros, paginación
+ * en cliente y registro de alta hospitalaria.
+ */
 
-import PacientesFiltros from '@/components/pacientes/PacientesFiltros/PacientesFiltros';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { obtenerMensajeError } from '@/api/axios';
+import Badge from '@/components/ui/Badge/Badge';
 import Button from '@/components/ui/Button/Button';
+import EstadoVacio from '@/components/ui/EstadoVacio/EstadoVacio';
+import Icono from '@/components/ui/Iconos/Iconos';
+import Modal from '@/components/ui/Modal/Modal';
+import Spinner from '@/components/ui/Spinner/Spinner';
 import Table, { type TableColumn } from '@/components/ui/Table/Table';
-
+import { useToast } from '@/context/ToastContext';
 import { pacientesService } from '@/services/pacientesService';
 import type { Paciente } from '@/types/paciente';
+import { formatearFecha, formatearEdadGestacional } from '@/utils/fechas';
+import { formatearEdadMeses, truncar } from '@/utils/calculos';
 
-/** Número máximo de elementos por página en el listado de pacientes. */
-const ITEMS_PER_PAGE = 5;
+import './PacientesPage.css';
+
+/** Filtros del listado. */
+type FiltroEstado = 'todos' | 'activos' | 'alta';
+type FiltroSexo = 'todos' | 'F' | 'M';
+
+/** Cantidad de filas por página. */
+const POR_PAGINA = 8;
 
 /**
- * Componente de página para la gestión, filtrado, paginación y visualización del listado de pacientes.
- * Conecta con el servicio de pacientes, gestiona estados de carga/error y facilita la navegación hacia registros o ediciones.
+ * Listado de pacientes.
  *
- * @returns Un elemento JSX con la vista completa del catálogo y filtros de pacientes.
+ * @returns Tabla con búsqueda, filtros y acciones.
  */
 export default function PacientesPage() {
-  const navigate = useNavigate();
+  const navegar = useNavigate();
+  const { exito, error: notificarError } = useToast();
 
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
   const [busqueda, setBusqueda] = useState('');
-  const [sexo, setSexo] = useState('');
-  const [fechaIngreso, setFechaIngreso] = useState('');
-  const [estadoCanula, setEstadoCanula] = useState('');
+  const [estado, setEstado] = useState<FiltroEstado>('activos');
+  const [sexo, setSexo] = useState<FiltroSexo>('todos');
+  const [pagina, setPagina] = useState(1);
+
+  const [pacienteAlta, setPacienteAlta] = useState<Paciente | null>(null);
+  const [motivo, setMotivo] = useState('');
+  const [procesando, setProcesando] = useState(false);
+
+  /**
+   * Carga todos los pacientes desde la API.
+   */
+  const cargar = async () => {
+    setCargando(true);
+    setError('');
+    try {
+      setPacientes(await pacientesService.listar());
+    } catch (fallo) {
+      setError(obtenerMensajeError(fallo));
+    } finally {
+      setCargando(false);
+    }
+  };
 
   useEffect(() => {
-    async function cargarPacientes() {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const data = await pacientesService.listar();
-
-        setPacientes(data);
-      } catch (error) {
-        console.error('Error al cargar pacientes:', error);
-
-        setError('No fue posible cargar los pacientes.');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    cargarPacientes();
+    void cargar();
   }, []);
 
-  const pacientesFiltrados = pacientes.filter((paciente) => {
-    const textoBusqueda = busqueda.trim().toLowerCase();
+  const filtrados = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
 
-    const coincideBusqueda =
-      textoBusqueda === '' ||
-      paciente.nombre.toLowerCase().includes(textoBusqueda) ||
-      String(paciente.id).includes(textoBusqueda);
+    return pacientes.filter((paciente) => {
+      const coincideTexto =
+        !texto ||
+        paciente.nombreCompleto.toLowerCase().includes(texto) ||
+        paciente.identificador.toLowerCase().includes(texto) ||
+        (paciente.medicoNombre ?? '').toLowerCase().includes(texto);
 
-    const coincideSexo = sexo === '' || paciente.sexo === sexo;
+      const coincideEstado =
+        estado === 'todos' ||
+        (estado === 'activos' && paciente.activo) ||
+        (estado === 'alta' && !paciente.activo);
 
-    const coincideFechaIngreso =
-      fechaIngreso === '' || paciente.fechaIngreso === fechaIngreso;
+      const coincideSexo = sexo === 'todos' || paciente.sexo === sexo;
 
-    const coincideEstadoCanula =
-      estadoCanula === '' || paciente.estadoCanula === estadoCanula;
+      return coincideTexto && coincideEstado && coincideSexo;
+    });
+  }, [pacientes, busqueda, estado, sexo]);
 
-    return (
-      coincideBusqueda &&
-      coincideSexo &&
-      coincideFechaIngreso &&
-      coincideEstadoCanula
-    );
-  });
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(pacientesFiltrados.length / ITEMS_PER_PAGE)
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / POR_PAGINA));
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const visibles = filtrados.slice(
+    (paginaActual - 1) * POR_PAGINA,
+    paginaActual * POR_PAGINA
   );
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const activos = pacientes.filter((paciente) => paciente.activo).length;
+  const conCuna = pacientes.filter((paciente) => paciente.cunaId).length;
 
-  const pacientesPaginados = pacientesFiltrados.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+  /**
+   * Registra el alta del paciente seleccionado.
+   */
+  const confirmarAlta = async () => {
+    if (!pacienteAlta) return;
 
-  function actualizarBusqueda(value: string) {
-    setBusqueda(value);
-    setCurrentPage(1);
-  }
+    if (motivo.trim().length < 3) {
+      notificarError('Describe el motivo del alta (mínimo 3 caracteres).');
+      return;
+    }
 
-  function actualizarSexo(value: string) {
-    setSexo(value);
-    setCurrentPage(1);
-  }
+    setProcesando(true);
+    try {
+      await pacientesService.darDeAlta(pacienteAlta.id, motivo.trim());
+      exito(`Alta registrada para ${pacienteAlta.nombreCompleto}.`);
+      setPacienteAlta(null);
+      setMotivo('');
+      await cargar();
+    } catch (fallo) {
+      notificarError(obtenerMensajeError(fallo));
+    } finally {
+      setProcesando(false);
+    }
+  };
 
-  function actualizarFechaIngreso(value: string) {
-    setFechaIngreso(value);
-    setCurrentPage(1);
-  }
-
-  function actualizarEstadoCanula(value: string) {
-    setEstadoCanula(value);
-    setCurrentPage(1);
-  }
-
-  function limpiarFiltros() {
-    setBusqueda('');
-    setSexo('');
-    setFechaIngreso('');
-    setEstadoCanula('');
-    setCurrentPage(1);
-  }
-
-  const columns: TableColumn<Paciente>[] = [
+  const columnas: TableColumn<Paciente>[] = [
     {
-      key: 'nombre',
-      label: 'Nombre',
+      key: 'paciente',
+      label: 'Paciente',
+      render: (fila) => (
+        <div className="pacientes__celda-paciente">
+          <span className="pacientes__avatar" aria-hidden="true">
+            {fila.nombreCompleto.slice(0, 2).toUpperCase()}
+          </span>
+          <div>
+            <p className="pacientes__nombre">{fila.nombreCompleto}</p>
+            <p className="pacientes__identificador">{fila.identificador}</p>
+          </div>
+        </div>
+      ),
     },
     {
-      key: 'fechaNacimiento',
-      label: 'Fecha de nacimiento',
+      key: 'sexo',
+      label: 'Sexo',
+      render: (fila) => (fila.sexo === 'F' ? 'Femenino' : 'Masculino'),
     },
     {
-      key: 'numeroCuna',
+      key: 'edad',
+      label: 'Edad',
+      render: (fila) => (
+        <span>
+          {formatearEdadMeses(fila.edadMeses)}
+          <span className="pacientes__secundario">
+            {' · '}
+            {formatearEdadGestacional(fila.edadGestacional)}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'cuna',
       label: 'Cuna',
+      render: (fila) =>
+        fila.cunaIdentificador ? (
+          <span className="pacientes__cuna">{fila.cunaIdentificador}</span>
+        ) : (
+          <span className="texto-muted">Sin cuna</span>
+        ),
     },
     {
-      key: 'medicoResponsable',
-      label: 'Médico responsable',
+      key: 'medico',
+      label: 'Médico a cargo',
+      render: (fila) => (
+        <span title={fila.medicoNombre ?? ''}>
+          {fila.medicoNombre ? truncar(fila.medicoNombre, 26) : '—'}
+        </span>
+      ),
     },
     {
-      key: 'diagnostico',
-      label: 'Diagnóstico',
+      key: 'ingreso',
+      label: 'Ingreso',
+      render: (fila) => formatearFecha(fila.fechaIngreso),
+    },
+    {
+      key: 'estado',
+      label: 'Estado',
+      render: (fila) => (
+        <Badge tono={fila.activo ? 'exito' : 'neutro'} punto>
+          {fila.activo ? 'Activo' : 'Alta'}
+        </Badge>
+      ),
     },
     {
       key: 'acciones',
       label: 'Acciones',
-      render: (paciente) => (
-        <Button onClick={() => navigate(`/pacientes/editar/${paciente.id}`)}>
-          Editar
-        </Button>
+      align: 'right',
+      render: (fila) => (
+        <div className="pacientes__acciones">
+          <Button
+            variante="fantasma"
+            tamano="sm"
+            onClick={() => navegar(`/pacientes/${fila.id}`)}
+            aria-label={`Ver ficha de ${fila.nombreCompleto}`}
+          >
+            Ver
+          </Button>
+          <Button
+            variante="fantasma"
+            tamano="sm"
+            onClick={() => navegar(`/pacientes/${fila.id}/editar`)}
+            aria-label={`Editar ${fila.nombreCompleto}`}
+          >
+            Editar
+          </Button>
+          {fila.activo && (
+            <Button
+              variante="fantasma"
+              tamano="sm"
+              onClick={() => {
+                setPacienteAlta(fila);
+                setMotivo('');
+              }}
+            >
+              Alta
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div>
-        <h1>Pacientes</h1>
-        <p>Cargando pacientes...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <h1>Pacientes</h1>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <div>
-        <h1>Pacientes</h1>
-
-        <Button onClick={() => navigate('/pacientes/nuevo')}>
-          Registrar paciente
-        </Button>
-      </div>
-
-      <PacientesFiltros
-        busqueda={busqueda}
-        sexo={sexo}
-        fechaIngreso={fechaIngreso}
-        estadoCanula={estadoCanula}
-        onBusquedaChange={actualizarBusqueda}
-        onSexoChange={actualizarSexo}
-        onFechaIngresoChange={actualizarFechaIngreso}
-        onEstadoCanulaChange={actualizarEstadoCanula}
-        onLimpiar={limpiarFiltros}
-      />
-
-      {pacientes.length === 0 ? (
-        <p>No hay pacientes registrados.</p>
-      ) : pacientesFiltrados.length === 0 ? (
+    <div className="pagina pacientes">
+      <header className="pagina__cabecera">
         <div>
-          <p>No se encontraron pacientes con los criterios seleccionados.</p>
-
-          <Button onClick={limpiarFiltros}>Limpiar filtros</Button>
+          <h2 className="pagina__titulo">Pacientes</h2>
+          <p className="pagina__descripcion">
+            {activos} pacientes activos · {conCuna} con cuna asignada ·{' '}
+            {pacientes.length} registros históricos.
+          </p>
         </div>
-      ) : (
-        <>
-          <div className="table-container">
-            <Table
-              columns={columns}
-              data={pacientesPaginados}
-              rowKey={(paciente) => paciente.id}
-            />
-          </div>
+        <div className="pagina__acciones">
+          <Link
+            to="/pacientes/nuevo"
+            className="boton boton--primario boton--md"
+          >
+            <Icono nombre="mas" tamano={15} />
+            Nuevo paciente
+          </Link>
+        </div>
+      </header>
 
-          <div>
-            <Button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((page) => page - 1)}
-            >
-              Anterior
-            </Button>
+      <section className="pacientes__filtros" aria-label="Filtros de pacientes">
+        <div className="pacientes__buscador">
+          <Icono nombre="buscar" tamano={16} />
+          <input
+            type="search"
+            value={busqueda}
+            onChange={(evento) => {
+              setBusqueda(evento.target.value);
+              setPagina(1);
+            }}
+            placeholder="Buscar por nombre, identificador o médico…"
+            aria-label="Buscar paciente"
+          />
+        </div>
 
-            <span>
-              {' '}
-              Página {currentPage} de {totalPages}{' '}
-            </span>
+        <div className="pacientes__grupo-filtros">
+          <select
+            className="campo__control"
+            value={estado}
+            onChange={(evento) => {
+              setEstado(evento.target.value as FiltroEstado);
+              setPagina(1);
+            }}
+            aria-label="Filtrar por estado"
+          >
+            <option value="activos">Solo activos</option>
+            <option value="todos">Todos los estados</option>
+            <option value="alta">Dados de alta</option>
+          </select>
 
-            <Button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((page) => page + 1)}
-            >
-              Siguiente
-            </Button>
-          </div>
-        </>
+          <select
+            className="campo__control"
+            value={sexo}
+            onChange={(evento) => {
+              setSexo(evento.target.value as FiltroSexo);
+              setPagina(1);
+            }}
+            aria-label="Filtrar por sexo"
+          >
+            <option value="todos">Todos los sexos</option>
+            <option value="F">Femenino</option>
+            <option value="M">Masculino</option>
+          </select>
+
+          <Button
+            variante="secundario"
+            onClick={() => void cargar()}
+            cargando={cargando}
+          >
+            Actualizar
+          </Button>
+        </div>
+      </section>
+
+      {error && (
+        <div className="mensaje mensaje--error" role="alert">
+          <span aria-hidden="true">!</span>
+          <span>{error}</span>
+        </div>
       )}
+
+      {cargando ? (
+        <Spinner bloque texto="Cargando pacientes…" />
+      ) : visibles.length === 0 ? (
+        <EstadoVacio
+          titulo="No se encontraron pacientes"
+          texto="Ajusta los filtros o registra un nuevo ingreso."
+          icono={<Icono nombre="pacientes" tamano={28} />}
+          accion={
+            <Link
+              to="/pacientes/nuevo"
+              className="boton boton--primario boton--md"
+            >
+              Registrar paciente
+            </Link>
+          }
+        />
+      ) : (
+        <section className="tarjeta tarjeta--sin-relleno">
+          <Table
+            columns={columnas}
+            data={visibles}
+            rowKey={(fila) => fila.id}
+            etiqueta="Listado de pacientes"
+            onRowClick={(fila) => navegar(`/pacientes/${fila.id}`)}
+          />
+        </section>
+      )}
+
+      <footer className="pacientes__pie">
+        <p>
+          Mostrando {visibles.length} de {filtrados.length} pacientes
+        </p>
+        <div className="pacientes__paginacion">
+          <Button
+            variante="secundario"
+            tamano="sm"
+            disabled={paginaActual <= 1}
+            onClick={() => setPagina((valor) => Math.max(1, valor - 1))}
+          >
+            Anterior
+          </Button>
+          <span>
+            Página {paginaActual} de {totalPaginas}
+          </span>
+          <Button
+            variante="secundario"
+            tamano="sm"
+            disabled={paginaActual >= totalPaginas}
+            onClick={() =>
+              setPagina((valor) => Math.min(totalPaginas, valor + 1))
+            }
+          >
+            Siguiente
+          </Button>
+        </div>
+      </footer>
+
+      <Modal
+        abierto={Boolean(pacienteAlta)}
+        titulo={`Dar de alta a ${pacienteAlta?.nombreCompleto ?? ''}`}
+        descripcion="El paciente quedará inactivo y su cuna será liberada."
+        onCerrar={() => {
+          if (!procesando) {
+            setPacienteAlta(null);
+            setMotivo('');
+          }
+        }}
+        ancho="sm"
+        pie={
+          <>
+            <Button
+              variante="secundario"
+              onClick={() => setPacienteAlta(null)}
+              disabled={procesando}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variante="peligro"
+              onClick={() => void confirmarAlta()}
+              cargando={procesando}
+            >
+              Confirmar alta
+            </Button>
+          </>
+        }
+      >
+        <div className="campo">
+          <label className="campo__label" htmlFor="motivo-alta">
+            Motivo del alta *
+          </label>
+          <textarea
+            id="motivo-alta"
+            className="campo__control"
+            value={motivo}
+            onChange={(evento) => setMotivo(evento.target.value)}
+            placeholder="Ej. Mejoría clínica, traslado a otro servicio…"
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

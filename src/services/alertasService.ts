@@ -1,62 +1,89 @@
 /**
  * @file alertasService.ts
- * @description Módulo de servicio crítico para la evaluación y clasificación de signos vitales neonatales.
- * Analiza parámetros como SpO2, frecuencia cardíaca y temperatura para determinar niveles de alerta
- * (Normal, Advertencia o Crítico) de acuerdo con los rangos clínicos seguros.
+ * @description Consulta y resolución de alertas clínicas.
  */
 
-export interface SignosVitales {
-  spo2: number;
-  ritmoCardiaco: number;
-  temperatura: number;
-}
+import { api } from '@/api/axios';
+import { mapAlerta, type ApiAlerta } from '@/api/mappers';
+import type { Alerta, FiltrosAlertas, Notificacion } from '@/types/alerta';
 
-export interface ResultadoAlerta {
-  esAlerta: boolean;
-  nivel: 'NORMAL' | 'ADVERTENCIA' | 'CRITICO';
-  mensaje?: string;
-  error?: string;
+/**
+ * Lista alertas clínicas aplicando filtros.
+ *
+ * @param filtros - Filtros opcionales.
+ * @returns Alertas normalizadas.
+ */
+export async function listarAlertas(
+  filtros: FiltrosAlertas = {}
+): Promise<Alerta[]> {
+  const params: Record<string, string | number | boolean> = {};
+  if (filtros.activa !== undefined) params.activa = filtros.activa;
+  if (filtros.nivel) params.nivel = filtros.nivel;
+  if (filtros.tipo) params.tipo = filtros.tipo;
+  if (filtros.pacienteId) params.paciente = filtros.pacienteId;
+  if (filtros.cunaId) params.cuna = filtros.cunaId;
+
+  const { data } = await api.get<ApiAlerta[]>('/alertas/', { params });
+  return data.map(mapAlerta);
 }
 
 /**
- * Evalúa los signos vitales recibidos (parciales o completos) y determina el estado de alerta del paciente.
- * Valida la existencia obligatoria de los parámetros y aplica reglas de umbrales clínicos.
+ * Recupera únicamente las alertas activas.
  *
- * @param signos - Objeto parcial que contiene los signos vitales actuales a evaluar.
- * @returns Un objeto de tipo {@link ResultadoAlerta} con el diagnóstico, nivel de criticidad y mensajes o errores asociados.
+ * @returns Alertas activas normalizadas.
  */
-export function evaluarAlerta(signos: Partial<SignosVitales>): ResultadoAlerta {
-  if (
-    signos.spo2 == null ||
-    signos.ritmoCardiaco == null ||
-    signos.temperatura == null
-  ) {
-    return {
-      esAlerta: false,
-      nivel: 'CRITICO',
-      error: 'Faltan parámetros requeridos',
-    };
-  }
-
-  if (
-    signos.spo2 < 88 ||
-    signos.ritmoCardiaco > 160 ||
-    signos.temperatura > 38.5
-  ) {
-    return {
-      esAlerta: true,
-      nivel: 'CRITICO',
-      mensaje: 'Valores fuera de rango seguro',
-    };
-  }
-
-  if (signos.spo2 < 92 || signos.ritmoCardiaco > 140) {
-    return {
-      esAlerta: true,
-      nivel: 'ADVERTENCIA',
-      mensaje: 'Precaución en parámetros',
-    };
-  }
-
-  return { esAlerta: false, nivel: 'NORMAL', mensaje: 'Parámetros normales' };
+export async function listarAlertasActivas(): Promise<Alerta[]> {
+  const { data } = await api.get<ApiAlerta[]>('/alertas/activas/');
+  return data.map(mapAlerta);
 }
+
+/**
+ * Marca una alerta como resuelta.
+ *
+ * @param id - Identificador de la alerta.
+ * @returns Alerta actualizada.
+ */
+export async function resolverAlerta(id: number): Promise<Alerta> {
+  const { data } = await api.post<{ alerta: ApiAlerta }>(
+    `/alertas/${id}/resolver/`
+  );
+  return mapAlerta(data.alerta);
+}
+
+/**
+ * Convierte alertas en notificaciones para la barra superior.
+ *
+ * @param alertas - Alertas activas.
+ * @returns Notificaciones ordenadas de más reciente a más antigua.
+ */
+export function alertasANotificaciones(alertas: Alerta[]): Notificacion[] {
+  return alertas
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime()
+    )
+    .map((alerta) => ({
+      id: `alerta-${alerta.id}`,
+      titulo:
+        alerta.nivel === 'Critica'
+          ? 'Alerta crítica'
+          : alerta.nivel === 'Advertencia'
+            ? 'Advertencia clínica'
+            : 'Información clínica',
+      detalle: `${alerta.mensaje}${
+        alerta.cunaIdentificador ? ` · Cuna ${alerta.cunaIdentificador}` : ''
+      }`,
+      fechaHora: alerta.fechaHora,
+      critica: alerta.nivel === 'Critica',
+      leida: !alerta.activa,
+      ruta: '/alertas',
+    }));
+}
+
+/** Servicio agrupado de alertas. */
+export const alertasService = {
+  listar: listarAlertas,
+  activas: listarAlertasActivas,
+  resolver: resolverAlerta,
+};

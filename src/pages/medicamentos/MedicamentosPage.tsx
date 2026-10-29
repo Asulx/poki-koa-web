@@ -1,115 +1,233 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+/**
+ * @file MedicamentosPage.tsx
+ * @description Página única de farmacia con dos pestañas: inventario
+ * (`/catalogo-medicamentos/`) y prescripciones (`/medicamentos/`).
+ */
 
+import { useEffect, useMemo, useState } from 'react';
+
+import { obtenerMensajeError } from '@/api/axios';
+import {
+  CatalogoForm,
+  PrescripcionForm,
+} from '@/components/medicamentos/MedicamentoFormularios';
+import Badge from '@/components/ui/Badge/Badge';
 import Button from '@/components/ui/Button/Button';
+import EstadoVacio from '@/components/ui/EstadoVacio/EstadoVacio';
+import Icono from '@/components/ui/Iconos/Iconos';
+import Modal from '@/components/ui/Modal/Modal';
+import Spinner from '@/components/ui/Spinner/Spinner';
 import Table, { type TableColumn } from '@/components/ui/Table/Table';
-import { getMedicamentos } from '@/services/medicamentosService';
-import type { Medicamento } from '@/types/medicamento';
+import { useToast } from '@/context/ToastContext';
+import { medicamentosService } from '@/services/medicamentosService';
+import { pacientesService } from '@/services/pacientesService';
+import type {
+  CatalogoPayload,
+  Medicamento,
+  MedicamentoCatalogo,
+  MedicamentoPayload,
+} from '@/types/medicamento';
+import type { Paciente } from '@/types/paciente';
 
 import './MedicamentosPage.css';
 
-/** Número máximo de elementos por página en la tabla de medicamentos. */
-const PAGE_SIZE = 5;
+/** Pestaña activa. */
+type Pestana = 'inventario' | 'prescripciones';
 
-/** Lista simulada (mock data) de respaldo para el desarrollo e interfaz de medicamentos. */
-const mockMedicamentos = [
-  {
-    id: '1',
-    nombre: 'Paracetamol',
-    principioActivo: 'Paracetamol',
-    dosis: '500mg',
-    stock: 120,
-  },
-  {
-    id: '2',
-    nombre: 'Ibuprofeno',
-    principioActivo: 'Ibuprofeno',
-    dosis: '400mg',
-    stock: 50,
-  },
-  {
-    id: '3',
-    nombre: 'Amoxicilina',
-    principioActivo: 'Amoxicilina',
-    dosis: '250mg',
-    stock: 15,
-  },
-  {
-    id: '4',
-    nombre: 'Loratadina',
-    principioActivo: 'Loratadina',
-    dosis: '10mg',
-    stock: 200,
-  },
-  {
-    id: '5',
-    nombre: 'Omeprazol',
-    principioActivo: 'Omeprazol',
-    dosis: '20mg',
-    stock: 80,
-  },
-  {
-    id: '6',
-    nombre: 'Diclofenaco',
-    principioActivo: 'Diclofenaco',
-    dosis: '50mg',
-    stock: 10,
-  },
-] as unknown as Medicamento[];
+/** Modal abierto. */
+type ModalAbierto = 'catalogo' | 'prescripcion' | null;
 
 /**
- * Componente de página para el listado, paginación y gestión general de medicamentos.
- * Permite visualizar el inventario farmacéutico en formato tabular con opciones de navegación y edición.
+ * Gestión de inventario y prescripciones.
  *
- * @returns Un elemento JSX con la vista completa del catálogo de medicamentos.
+ * @returns Pestañas con tablas y formularios modales.
  */
 export default function MedicamentosPage() {
-  const navigate = useNavigate();
+  const { exito, error: notificarError } = useToast();
 
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pestana, setPestana] = useState<Pestana>('inventario');
+  const [catalogo, setCatalogo] = useState<MedicamentoCatalogo[]>([]);
+  const [prescripciones, setPrescripciones] = useState<Medicamento[]>([]);
+  const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-  const [page, setPage] = useState(1);
+  const [busqueda, setBusqueda] = useState('');
+  const [soloStockBajo, setSoloStockBajo] = useState(false);
+
+  const [modal, setModal] = useState<ModalAbierto>(null);
+  const [productoEdicion, setProductoEdicion] =
+    useState<MedicamentoCatalogo | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [errorFormulario, setErrorFormulario] = useState('');
+
+  /**
+   * Carga catálogo, prescripciones y pacientes activos.
+   */
+  const cargar = async () => {
+    setCargando(true);
+    setError('');
+
+    try {
+      const [listaCatalogo, listaPrescripciones, listaPacientes] =
+        await Promise.all([
+          medicamentosService.listarCatalogo(),
+          medicamentosService.listarPrescripciones(),
+          pacientesService.listar({ activo: true }),
+        ]);
+
+      setCatalogo(listaCatalogo);
+      setPrescripciones(listaPrescripciones);
+      setPacientes(listaPacientes);
+    } catch (fallo) {
+      setError(obtenerMensajeError(fallo));
+    } finally {
+      setCargando(false);
+    }
+  };
 
   useEffect(() => {
-    // 2. Comentamos la llamada real a la API
-    /*
-    getMedicamentos()
-      .then((data) => {
-        setMedicamentos(data)
-      })
-      .catch(() => {
-        setError('No se pudieron cargar los medicamentos')
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-    */
-
-    // 3. Inyectamos los datos falsos inmediatamente
-    setMedicamentos(mockMedicamentos);
-    setLoading(false);
+    void cargar();
   }, []);
 
-  const totalPages = Math.max(1, Math.ceil(medicamentos.length / PAGE_SIZE));
+  const catalogoFiltrado = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
+    return catalogo.filter((item) => {
+      const coincideTexto =
+        !texto ||
+        item.nombre.toLowerCase().includes(texto) ||
+        item.principioActivo.toLowerCase().includes(texto);
+      const coincideStock = !soloStockBajo || item.stock < 10;
+      return coincideTexto && coincideStock;
+    });
+  }, [catalogo, busqueda, soloStockBajo]);
 
-  const visibleMedicamentos = medicamentos.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
+  const prescripcionesFiltradas = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
+    return prescripciones.filter(
+      (item) =>
+        !texto ||
+        item.pacienteNombre.toLowerCase().includes(texto) ||
+        item.nombre.toLowerCase().includes(texto)
+    );
+  }, [prescripciones, busqueda]);
 
-  const columns: TableColumn<Medicamento>[] = [
-    { key: 'nombre', label: 'Nombre' },
-    { key: 'principioActivo', label: 'Principio activo' },
-    { key: 'dosis', label: 'Dosis' },
-    { key: 'stock', label: 'Stock' },
+  const pendientes = prescripciones.filter(
+    (item) => item.estado === 'Pendiente'
+  ).length;
+  const stockCritico = catalogo.filter((item) => item.stock < 10).length;
+
+  /**
+   * Abre el formulario de catálogo (nuevo o edición).
+   *
+   * @param producto - Producto a editar o `null` para crear.
+   */
+  const abrirCatalogo = (producto: MedicamentoCatalogo | null) => {
+    setProductoEdicion(producto);
+    setErrorFormulario('');
+    setModal('catalogo');
+  };
+
+  /**
+   * Guarda un producto del catálogo.
+   *
+   * @param datos - Payload validado.
+   */
+  const guardarCatalogo = async (datos: CatalogoPayload) => {
+    setGuardando(true);
+    setErrorFormulario('');
+    try {
+      if (productoEdicion) {
+        await medicamentosService.actualizarCatalogo(productoEdicion.id, datos);
+        exito('Producto actualizado en el inventario.');
+      } else {
+        await medicamentosService.crearCatalogo(datos);
+        exito('Producto agregado al inventario.');
+      }
+      setModal(null);
+      await cargar();
+    } catch (fallo) {
+      setErrorFormulario(obtenerMensajeError(fallo));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  /**
+   * Guarda una prescripción nueva.
+   *
+   * @param datos - Payload validado.
+   */
+  const guardarPrescripcion = async (datos: MedicamentoPayload) => {
+    setGuardando(true);
+    setErrorFormulario('');
+    try {
+      await medicamentosService.crearPrescripcion(datos);
+      exito('Prescripción registrada.');
+      setModal(null);
+      await cargar();
+    } catch (fallo) {
+      setErrorFormulario(obtenerMensajeError(fallo));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  /**
+   * Marca una prescripción como administrada.
+   *
+   * @param prescripcion - Prescripción seleccionada.
+   */
+  const administrar = async (prescripcion: Medicamento) => {
+    try {
+      await medicamentosService.administrar(prescripcion.id);
+      exito(
+        `${prescripcion.nombre} administrado a ${prescripcion.pacienteNombre}.`
+      );
+      await cargar();
+    } catch (fallo) {
+      notificarError(obtenerMensajeError(fallo));
+    }
+  };
+
+  const columnasCatalogo: TableColumn<MedicamentoCatalogo>[] = [
+    {
+      key: 'nombre',
+      label: 'Medicamento',
+      render: (fila) => (
+        <div>
+          <p className="farmacia__fuerte">{fila.nombre}</p>
+          <p className="farmacia__secundario">{fila.principioActivo}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'dosisMg',
+      label: 'Dosis',
+      render: (fila) => <span className="texto-mono">{fila.dosisMg} mg</span>,
+    },
+    {
+      key: 'stock',
+      label: 'Stock',
+      render: (fila) => (
+        <Badge
+          tono={
+            fila.stock < 10 ? 'critico' : fila.stock < 30 ? 'aviso' : 'exito'
+          }
+          punto
+        >
+          {fila.stock} unidades
+        </Badge>
+      ),
+    },
     {
       key: 'acciones',
       label: 'Acciones',
-      render: (medicamento) => (
+      align: 'right',
+      render: (fila) => (
         <Button
-          variant="secondary"
-          onClick={() => navigate(`/medicamentos/editar/${medicamento.id}`)}
+          variante="fantasma"
+          tamano="sm"
+          onClick={() => abrirCatalogo(fila)}
         >
           Editar
         </Button>
@@ -117,45 +235,251 @@ export default function MedicamentosPage() {
     },
   ];
 
+  const columnasPrescripciones: TableColumn<Medicamento>[] = [
+    {
+      key: 'paciente',
+      label: 'Paciente',
+      render: (fila) => (
+        <div>
+          <p className="farmacia__fuerte">{fila.pacienteNombre}</p>
+          <p className="farmacia__secundario">Cuna {fila.cuna}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'medicamento',
+      label: 'Prescripción',
+      render: (fila) => (
+        <div>
+          <p className="farmacia__fuerte">{fila.nombre}</p>
+          <p className="farmacia__secundario">{fila.dosis}</p>
+        </div>
+      ),
+    },
+    { key: 'via', label: 'Vía' },
+    {
+      key: 'hora',
+      label: 'Hora',
+      render: (fila) => <span className="texto-mono">{fila.hora}</span>,
+    },
+    {
+      key: 'estado',
+      label: 'Estado',
+      render: (fila) => (
+        <Badge tono={fila.estado === 'Administrado' ? 'exito' : 'aviso'} punto>
+          {fila.estado}
+        </Badge>
+      ),
+    },
+    {
+      key: 'acciones',
+      label: 'Acciones',
+      align: 'right',
+      render: (fila) =>
+        fila.estado === 'Pendiente' ? (
+          <Button
+            variante="exito"
+            tamano="sm"
+            onClick={() => void administrar(fila)}
+          >
+            Administrar
+          </Button>
+        ) : (
+          <span className="farmacia__secundario">Registrado</span>
+        ),
+    },
+  ];
+
   return (
-    <div>
-      <h1>Listado de Medicamentos</h1>
+    <div className="pagina farmacia">
+      <header className="pagina__cabecera">
+        <div>
+          <h2 className="pagina__titulo">Medicamentos</h2>
+          <p className="pagina__descripcion">
+            {pendientes} prescripciones pendientes · {stockCritico} productos
+            con stock crítico.
+          </p>
+        </div>
+        <div className="pagina__acciones">
+          <Button
+            variante="secundario"
+            onClick={() => void cargar()}
+            cargando={cargando}
+          >
+            Actualizar
+          </Button>
+          {pestana === 'inventario' ? (
+            <Button
+              icono={<Icono nombre="mas" tamano={15} />}
+              onClick={() => abrirCatalogo(null)}
+            >
+              Nuevo medicamento
+            </Button>
+          ) : (
+            <Button
+              icono={<Icono nombre="mas" tamano={15} />}
+              onClick={() => {
+                setErrorFormulario('');
+                setModal('prescripcion');
+              }}
+            >
+              Nueva prescripción
+            </Button>
+          )}
+        </div>
+      </header>
 
-      {loading ? (
-        <p>Cargando medicamentos...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : (
-        <>
-          <Table
-            columns={columns}
-            data={visibleMedicamentos}
-            rowKey={(medicamento) => medicamento.id}
+      <div
+        className="farmacia__pestanas"
+        role="tablist"
+        aria-label="Secciones de farmacia"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={pestana === 'inventario'}
+          className={`farmacia__pestana ${pestana === 'inventario' ? 'farmacia__pestana--activa' : ''}`}
+          onClick={() => {
+            setPestana('inventario');
+            setBusqueda('');
+          }}
+        >
+          <Icono nombre="medicamentos" tamano={15} />
+          Inventario
+          <span className="farmacia__contador">{catalogo.length}</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={pestana === 'prescripciones'}
+          className={`farmacia__pestana ${pestana === 'prescripciones' ? 'farmacia__pestana--activa' : ''}`}
+          onClick={() => {
+            setPestana('prescripciones');
+            setBusqueda('');
+          }}
+        >
+          <Icono nombre="planes" tamano={15} />
+          Prescripciones
+          <span className="farmacia__contador">{prescripciones.length}</span>
+        </button>
+      </div>
+
+      <div className="farmacia__herramientas">
+        <div className="farmacia__buscador">
+          <Icono nombre="buscar" tamano={16} />
+          <input
+            type="search"
+            value={busqueda}
+            onChange={(evento) => setBusqueda(evento.target.value)}
+            placeholder={
+              pestana === 'inventario'
+                ? 'Buscar medicamento o principio activo…'
+                : 'Buscar por paciente o medicamento…'
+            }
+            aria-label="Buscar en medicamentos"
           />
+        </div>
 
-          <div className="pagination">
-            <Button
-              variant="secondary"
-              disabled={page <= 1}
-              onClick={() => setPage((prev) => prev - 1)}
-            >
-              Anterior
-            </Button>
+        {pestana === 'inventario' && (
+          <label className="farmacia__check">
+            <input
+              type="checkbox"
+              checked={soloStockBajo}
+              onChange={(evento) => setSoloStockBajo(evento.target.checked)}
+            />
+            Solo stock crítico (&lt; 10)
+          </label>
+        )}
+      </div>
 
-            <span>
-              Página {page} de {totalPages}
-            </span>
-
-            <Button
-              variant="secondary"
-              disabled={page >= totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              Siguiente
-            </Button>
-          </div>
-        </>
+      {error && (
+        <div className="mensaje mensaje--error" role="alert">
+          <span aria-hidden="true">!</span>
+          <span>{error}</span>
+        </div>
       )}
+
+      {cargando ? (
+        <Spinner bloque texto="Cargando farmacia…" />
+      ) : pestana === 'inventario' ? (
+        catalogoFiltrado.length === 0 ? (
+          <EstadoVacio
+            titulo="Sin productos en el inventario"
+            texto="Agrega el primer medicamento o ajusta la búsqueda."
+            icono={<Icono nombre="medicamentos" tamano={28} />}
+            accion={
+              <Button onClick={() => abrirCatalogo(null)}>
+                Agregar medicamento
+              </Button>
+            }
+          />
+        ) : (
+          <section className="tarjeta tarjeta--sin-relleno">
+            <Table
+              columns={columnasCatalogo}
+              data={catalogoFiltrado}
+              rowKey={(fila) => fila.id}
+              etiqueta="Inventario de medicamentos"
+            />
+          </section>
+        )
+      ) : prescripcionesFiltradas.length === 0 ? (
+        <EstadoVacio
+          titulo="Sin prescripciones registradas"
+          texto="Crea una prescripción para un paciente activo."
+          icono={<Icono nombre="planes" tamano={28} />}
+          accion={
+            <Button onClick={() => setModal('prescripcion')}>
+              Nueva prescripción
+            </Button>
+          }
+        />
+      ) : (
+        <section className="tarjeta tarjeta--sin-relleno">
+          <Table
+            columns={columnasPrescripciones}
+            data={prescripcionesFiltradas}
+            rowKey={(fila) => fila.id}
+            etiqueta="Prescripciones de medicamentos"
+          />
+        </section>
+      )}
+
+      <Modal
+        abierto={modal === 'catalogo'}
+        titulo={productoEdicion ? 'Editar medicamento' : 'Nuevo medicamento'}
+        descripcion="El inventario es independiente de las prescripciones por paciente."
+        onCerrar={() => {
+          if (!guardando) setModal(null);
+        }}
+        pie={undefined}
+      >
+        <CatalogoForm
+          producto={productoEdicion ?? undefined}
+          guardando={guardando}
+          error={errorFormulario}
+          onSubmit={guardarCatalogo}
+          onCancelar={() => setModal(null)}
+        />
+      </Modal>
+
+      <Modal
+        abierto={modal === 'prescripcion'}
+        titulo="Nueva prescripción"
+        descripcion="Solo se listan pacientes activos de la unidad."
+        onCerrar={() => {
+          if (!guardando) setModal(null);
+        }}
+        ancho="lg"
+      >
+        <PrescripcionForm
+          pacientes={pacientes}
+          guardando={guardando}
+          error={errorFormulario}
+          onSubmit={guardarPrescripcion}
+          onCancelar={() => setModal(null)}
+        />
+      </Modal>
     </div>
   );
 }

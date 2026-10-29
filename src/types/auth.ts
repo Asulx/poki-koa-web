@@ -1,19 +1,55 @@
 /**
- * @file usuario.ts
- * @description Definición de contratos de tipo para la gestión de usuarios,
- * roles y control de acceso dentro del sistema neonatal.
+ * @file auth.ts
+ * @description Contratos de autenticación y perfiles clínicos. La API entrega
+ * `snake_case`; las capas de mapeo transforman a `camelCase` para el frontend.
  */
 
-/**
- * Roles permitidos en el sistema para el control de permisos y autorizaciones.
- */
-export type Rol = 'admin' | 'jefe' | 'medico' | 'enfermero' | 'apoderado';
+/** Roles clínicos reconocidos por el backend (`PerfilUsuario.Rol`). */
+export type Rol = 'administrador' | 'medico' | 'enfermeria';
 
-/**
- * Representa la estructura de datos de un usuario autenticado en el sistema.
- */
-export type Usuario = {
+/** Perfil clínico asociado a un usuario. */
+export interface Perfil {
+  id: number;
+  usuarioId: number;
+  rol: Rol | null;
+  rolDisplay: string | null;
+  turno: string | null;
+  nombreCompleto: string;
+  iniciales: string;
+  creadoEn: string;
+  actualizadoEn: string;
+}
+
+/** Usuario autenticado expuesto por `/api/auth/me/`. */
+export interface Usuario {
+  id: number;
   username: string;
-  nombre: string;
-  rol: Rol;
-};
+  email: string;
+  firstName: string;
+  lastName: string;
+  nombreCompleto: string;
+  iniciales: string;
+  rol: Rol | null;
+  rolDisplay: string | null;
+  turno: string | null;
+  esAdministrador: boolean;
+  isSuperuser: boolean;
+  isStaff: boolean;
+  activo: boolean;
+}
+
+/** Sesión completa devuelta por `POST /api/auth/login/`. */
+export interface Sesion {
+  token: string;
+  usuario: Usuario;
+  perfil: Perfil | null;
+}
+
+/** Sesión rehidratada desde `GET /api/auth/me/` (sin token). */
+export type SesionRehidratada = Omit<Sesion, 'token'>;
+
+/** Credenciales del formulario de inicio de sesión. */
+export interface Credenciales {
+  username: string;
+  password: string;
+}

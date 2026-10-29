@@ -1,31 +1,72 @@
-import { Navigate, Outlet } from 'react-router-dom';
+/**
+ * @file RutaProtegida.tsx
+ * @description Guarda de rutas: espera la rehidratación de la sesión, exige
+ * autenticación y, opcionalmente, restringe el acceso por rol clínico.
+ */
+
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/context/AuthContext';
 import type { Rol } from '@/types/auth';
+import { esAdministrador } from '@/utils/roles';
 
-/**
- * Propiedades para el componente de guardián de rutas protegidas.
- */
-type Props = {
-  /**
-   * Lista opcional de roles permitidos para acceder a la ruta.
-   * Si no se especifica, solo se requiere estar autenticado.
-   */
+/** Propiedades del guardián de rutas. */
+interface Props {
+  /** Roles autorizados. Si se omite, basta con tener sesión activa. */
   roles?: Rol[];
-};
+}
 
 /**
- * Guardián de rutas para controlar el acceso según el estado de autenticación y rol del usuario.
- * Redirige a `/login` si no hay sesión activa o al inicio `/` si el usuario no posee un rol autorizado.
+ * Comprueba si el rol efectivo está dentro de los permitidos. Un
+ * superusuario siempre se considera administrador aunque no tenga perfil
+ * clínico asignado.
  *
- * @param props Contiene la lista opcional de roles autorizados.
- * @returns El componente de la ruta anidada (`<Outlet />`) si cumple los permisos, o un componente de redirección (`<Navigate />`).
+ * @param rol - Rol del usuario autenticado.
+ * @param roles - Roles autorizados.
+ * @param administrador - Indica si la cuenta tiene privilegios de admin.
+ * @returns `true` si la ruta es accesible.
+ */
+function rolAutorizado(
+  rol: Rol | null,
+  roles: Rol[],
+  administrador: boolean
+): boolean {
+  if (rol && roles.includes(rol)) return true;
+  return administrador && roles.includes('administrador');
+}
+
+/**
+ * Envuelve las rutas privadas de la aplicación.
+ *
+ * @param props - Lista opcional de roles autorizados.
+ * @returns `Outlet` si hay permiso, pantalla de carga o redirección si no.
  */
 export default function RutaProtegida({ roles }: Props) {
-  const { usuario } = useAuth();
+  const { estado, usuario } = useAuth();
+  const ubicacion = useLocation();
 
-  if (!usuario) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(usuario.rol)) return <Navigate to="/" replace />;
+  if (estado === 'cargando') {
+    return (
+      <div className="cargando" aria-busy="true">
+        <span className="spinner" aria-hidden="true" />
+        <p>Verificando sesión…</p>
+      </div>
+    );
+  }
+
+  if (estado !== 'autenticado' || !usuario) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ desde: `${ubicacion.pathname}${ubicacion.search}` }}
+      />
+    );
+  }
+
+  if (roles && !rolAutorizado(usuario.rol, roles, esAdministrador(usuario))) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 }
